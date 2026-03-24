@@ -262,6 +262,64 @@
     .filter-pill:hover { border-color: #7C50C8; color: #7C50C8; }
     .filter-pill.active { background: #7C50C8; border-color: #7C50C8; color: white; }
 
+    /* ── Filter section header (collapsible) ── */
+    #filter-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 2px 0 6px;
+      user-select: none;
+    }
+    #filter-section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #b0a8c4;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    #filter-collapse-chevron {
+      width: 15px;
+      height: 15px;
+      color: #c8bfe0;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    #filter-collapse-chevron.collapsed { transform: rotate(-90deg); }
+    #filter-pills-body.collapsed { display: none; }
+
+    /* ── Cluster view banner ── */
+    #cluster-view-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 16px;
+      background: #f3eeff;
+      border-bottom: 1px solid #e4d9f9;
+      font-size: 12px;
+      font-weight: 500;
+      color: #7C50C8;
+      gap: 8px;
+    }
+    #cluster-view-banner.visible { display: flex; }
+    #cluster-view-clear {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: 1.5px solid #c9b8ef;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #9e80d4;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      padding: 2px 9px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    #cluster-view-clear:hover { background: #ede0ff; color: #7C50C8; border-color: #a87de0; }
+
     /* ── Secondary filters (year + country) ── */
     #secondary-filters {
       display: none;
@@ -1086,7 +1144,19 @@
 
   <!-- Team filter pills — shown once data loads -->
   <div id="filter-pills-wrap">
-    <div id="filter-pills"></div>
+    <div id="filter-section-header" onclick="toggleFilterCollapse()">
+      <span id="filter-section-label">Roles</span>
+      <svg id="filter-collapse-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div id="filter-pills-body">
+      <div id="filter-pills"></div>
+    </div>
+  </div>
+
+  <!-- Cluster view banner (shown when user clicks a cluster bubble) -->
+  <div id="cluster-view-banner">
+    <span id="cluster-view-label">📍 2 people here</span>
+    <button id="cluster-view-clear" onclick="clearClusterView()">✕ Back</button>
   </div>
 
   <!-- Year + Country filters — shown once data loads -->
@@ -1450,6 +1520,34 @@ const markerCluster = L.markerClusterGroup({
   },
 });
 markerCluster.addTo(map);
+
+// ── Cluster click: show those members in sidebar ──
+let clusterView = null; // null or array of member indices
+
+markerCluster.on('clusterclick', function(e) {
+  const childMarkers = e.layer.getAllChildMarkers();
+  const indices = childMarkers
+    .map(m => leafletMarkers.indexOf(m))
+    .filter(i => i >= 0);
+  if (!indices.length) return;
+
+  clusterView = indices;
+  const city = members[indices[0]]?.city || 'same location';
+  const banner = document.getElementById('cluster-view-banner');
+  document.getElementById('cluster-view-label').textContent =
+    `📍 ${indices.length} people · ${city}`;
+  banner.classList.add('visible');
+
+  renderList(indices.map(i => members[i]).filter(Boolean));
+  // Don't call renderMapMarkers — keep map state as-is so zoom still works
+});
+
+function clearClusterView() {
+  clusterView = null;
+  const banner = document.getElementById('cluster-view-banner');
+  if (banner) banner.classList.remove('visible');
+  renderListFiltered();
+}
 
 // ════════════════════════════════════════════════════════════
 // MARKERS
@@ -2005,7 +2103,34 @@ async function deleteSelected() {
 }
 
 // ════════════════════════════════════════════════════════════
-// FILTER PILLS
+// FILTER PILLS + COLLAPSE
+// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+let filtersCollapsed = localStorage.getItem('clutch-filters-collapsed') === 'true';
+
+function toggleFilterCollapse() {
+  filtersCollapsed = !filtersCollapsed;
+  localStorage.setItem('clutch-filters-collapsed', filtersCollapsed);
+  applyFilterCollapse();
+}
+
+function applyFilterCollapse() {
+  const body    = document.getElementById('filter-pills-body');
+  const chevron = document.getElementById('filter-collapse-chevron');
+  const sec     = document.getElementById('secondary-filters');
+  if (!body || !chevron) return;
+
+  if (filtersCollapsed) {
+    body.classList.add('collapsed');
+    chevron.classList.add('collapsed');
+    if (sec) sec.style.setProperty('display', 'none', 'important');
+  } else {
+    body.classList.remove('collapsed');
+    chevron.classList.remove('collapsed');
+    if (sec) sec.style.removeProperty('display');
+  }
+}
+
 // ════════════════════════════════════════════════════════════
 // activeFilter is now a Set of selected roles; empty Set = show all
 let activeFilter = new Set();
@@ -2040,6 +2165,9 @@ function renderFilterPills() {
     };
     pills.appendChild(pill);
   });
+
+  // Apply collapse state every time pills are re-rendered
+  applyFilterCollapse();
 }
 
 function fitMapToFilter() {
@@ -2112,6 +2240,12 @@ function zoomToAll() {
 }
 
 function renderListFiltered() {
+  // Any explicit filter/search action clears a cluster view
+  if (clusterView !== null) {
+    clusterView = null;
+    const banner = document.getElementById('cluster-view-banner');
+    if (banner) banner.classList.remove('visible');
+  }
   renderList(getFilteredList());
   renderMapMarkers();
 }
