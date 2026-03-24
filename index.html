@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clutch · Where in the World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: #f5f4f8;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 320px;
+      min-width: 320px;
+      height: 100vh;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 16px rgba(80, 40, 160, 0.08);
+      z-index: 1000;
+      position: relative;
+    }
+
+    .sidebar-header {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid #f0eef8;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .logo-icon {
+      width: 30px;
+      height: 30px;
+      background: #7C50C8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    .logo-wordmark {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1230;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .page-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #1a1230;
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      font-size: 12.5px;
+      color: #9b93b0;
+      margin-top: 3px;
+    }
+
+    /* ── Stats ── */
+    .stats-row {
+      display: flex;
+      padding: 14px 12px;
+      border-bottom: 1px solid #f0eef8;
+      gap: 4px;
+    }
+
+    .stat { flex: 1; text-align: center; padding: 6px 4px; }
+
+    .stat-num {
+      font-size: 21px;
+      font-weight: 700;
+      color: #7C50C8;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      color: #b0a8c4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-top: 3px;
+    }
+
+    .stat-divider { width: 1px; background: #f0eef8; margin: 6px 0; }
+
+    /* ── Search ── */
+    .search-wrap {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0eef8;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      color: #1a1230;
+      background: #faf9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23b0a8c4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") 10px center no-repeat;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .search-input:focus { border-color: #7C50C8; background-color: #fff; }
+    .search-input::placeholder { color: #c0bad4; }
+
+    /* ── Member List ── */
+    #member-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 0;
+    }
+
+    #member-list::-webkit-scrollbar { width: 4px; }
+    #member-list::-webkit-scrollbar-track { background: transparent; }
+    #member-list::-webkit-scrollbar-thumb { background: #e8e4f4; border-radius: 2px; }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    .member-item:hover { background: #faf8ff; }
+    .member-item.active { background: #f3eeff; border-left-color: #7C50C8; }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+    }
+
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .member-info { flex: 1; min-width: 0; }
+
+    .member-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1a1230;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-role {
+      font-size: 11.5px;
+      color: #9b93b0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+
+    .member-location {
+      font-size: 11px;
+      color: #7C50C8;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-year { font-size: 10.5px; color: #c0bad4; white-space: nowrap; flex-shrink: 0; }
+
+    /* ── Member action buttons (edit / delete) ── */
+    .member-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+
+    .member-item:hover .member-actions { opacity: 1; }
+
+    .action-btn {
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .edit-btn  { background: #f0eaff; color: #7C50C8; }
+    .edit-btn:hover  { background: #7C50C8; color: white; }
+    .delete-btn { background: #fff0f0; color: #e05252; }
+    .delete-btn:hover { background: #e05252; color: white; }
+
+    /* ── Filter pills ── */
+    #filter-pills-wrap {
+      padding: 8px 16px 10px;
+      border-bottom: 1px solid #f0eef8;
+      display: none;
+    }
+
+    #filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .filter-pill {
+      padding: 4px 10px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 20px;
+      background: white;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      color: #7a6e8e;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover { border-color: #7C50C8; color: #7C50C8; }
+    .filter-pill.active { background: #7C50C8; border-color: #7C50C8; color: white; }
+
+    /* ── Secondary filters (year + country) ── */
+    #secondary-filters {
+      display: none;
+      padding: 0 16px 10px;
+      border-bottom: 1px solid #f0eef8;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #secondary-filters.visible { display: flex; }
+
+    .secondary-filter-select {
+      flex: 1;
+      min-width: 110px;
+      padding: 5px 26px 5px 9px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: #3d2e5e;
+      background: #faf9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23b0a8c4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 8px center no-repeat;
+      appearance: none;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .secondary-filter-select:focus { border-color: #7C50C8; }
+    .secondary-filter-select.filtered { border-color: #7C50C8; background-color: #f3eeff; color: #7C50C8; }
+
+    /* ── Select-all button (manage mode only) ── */
+    #select-all-btn {
+      display: none;
+      font-size: 11.5px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      color: #7C50C8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0;
+      margin-right: 6px;
+      transition: color 0.15s;
+    }
+
+    #select-all-btn:hover { color: #5B38A8; }
+
+    /* ── Select styling (role dropdown) ── */
+    select.form-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0a8c4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    select.form-input:focus { border-color: #7C50C8; background-color: white; }
+
+    .empty-state {
+      padding: 32px 20px;
+      text-align: center;
+      color: #c0bad4;
+      font-size: 13px;
+    }
+
+    /* ── Add Button ── */
+    .add-btn-wrap {
+      padding: 14px 16px 16px;
+      border-top: 1px solid #f0eef8;
+    }
+
+    #add-btn {
+      width: 100%;
+      padding: 11px 16px;
+      background: #7C50C8;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      letter-spacing: 0.2px;
+    }
+
+    #add-btn:hover { background: #6B3DB8; }
+    #add-btn:active { transform: scale(0.98); }
+
+    /* ── Map ── */
+    #map { flex: 1; height: 100vh; }
+
+    /* ── Leaflet overrides ── */
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(80, 40, 160, 0.15);
+      border: 1px solid #ede9f8;
+      padding: 0;
+    }
+
+    .leaflet-popup-content { margin: 0; }
+    .leaflet-popup-tip { background: white; }
+    .leaflet-control-zoom a { color: #1a1230 !important; font-family: 'Inter', sans-serif !important; }
+
+    /* ── Modal ── */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 10, 40, 0.45);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+
+    #modal-overlay.open { display: flex; }
+
+    #modal {
+      background: white;
+      border-radius: 18px;
+      padding: 32px;
+      width: 460px;
+      max-width: calc(100vw - 40px);
+      box-shadow: 0 24px 64px rgba(80, 40, 160, 0.2);
+      animation: slideUp 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(24px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1230;
+      margin-bottom: 3px;
+    }
+
+    .modal-subtitle {
+      font-size: 13px;
+      color: #9b93b0;
+      margin-bottom: 20px;
+    }
+
+    /* ── Returning user banner ── */
+    #returning-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: #f3eeff;
+      border: 1.5px solid #d8c8f5;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 12.5px;
+      color: #5a3a9a;
+      line-height: 1.4;
+    }
+
+    #returning-banner.visible { display: flex; }
+
+    #returning-banner svg { flex-shrink: 0; }
+
+    /* ── Form ── */
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #3d2e5e;
+      margin-bottom: 5px;
+    }
+
+    .form-label .optional { color: #c0bad4; font-weight: 400; }
+
+    .form-input {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      color: #1a1230;
+      background: #faf9fc;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-input:focus { border-color: #7C50C8; background: white; }
+    .form-input::placeholder { color: #c0bad4; }
+    .form-input.error { border-color: #e05252; }
+
+    /* ── Email prefix + suffix ── */
+    .email-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #ece9f5;
+      border-radius: 8px;
+      background: #faf9fc;
+      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .email-wrap:focus-within { border-color: #7C50C8; background: white; }
+    .email-wrap.error { border-color: #e05252; }
+
+    .email-prefix {
+      flex: 1;
+      padding: 9px 0 9px 13px;
+      border: none;
+      background: transparent;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+      color: #1a1230;
+      outline: none;
+      min-width: 0;
+    }
+
+    .email-prefix::placeholder { color: #c0bad4; }
+
+    .email-suffix {
+      padding: 9px 13px 9px 2px;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+      color: #b0a8c4;
+      white-space: nowrap;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .field-error {
+      font-size: 11.5px;
+      color: #e05252;
+      margin-top: 4px;
+      display: none;
+    }
+
+    /* ── City autocomplete ── */
+    .city-wrap { position: relative; }
+
+    #city-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1.5px solid #ece9f5;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(80, 40, 160, 0.12);
+      z-index: 100;
+      overflow: hidden;
+      animation: dropIn 0.15s ease;
+    }
+
+    #city-dropdown.open { display: block; }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .city-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      cursor: pointer;
+      transition: background 0.12s;
+      border-bottom: 1px solid #f5f3fb;
+    }
+
+    .city-option:last-child { border-bottom: none; }
+    .city-option:hover { background: #f5f2ff; }
+
+    .city-option-pin {
+      font-size: 14px;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+
+    .city-option-text { flex: 1; min-width: 0; }
+
+    .city-option-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1230;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .city-option-country {
+      font-size: 11px;
+      color: #9b93b0;
+      margin-top: 1px;
+    }
+
+    .city-searching {
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: #b0a8c4;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Selected city tag ── */
+    #city-selected-tag {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      margin-top: 6px;
+      background: #f0eaff;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #6236b0;
+      font-weight: 500;
+    }
+
+    #city-selected-tag.visible { display: flex; }
+
+    #city-selected-tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #a090c0;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      margin-left: auto;
+      transition: color 0.15s;
+    }
+
+    #city-selected-tag button:hover { color: #7C50C8; }
+
+    /* ── Form actions ── */
+    .form-actions { display: flex; gap: 10px; margin-top: 22px; }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 11px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 9px;
+      background: white;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      color: #7a6e8e;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover { border-color: #d4cde8; background: #faf8ff; }
+
+    .btn-submit {
+      flex: 2;
+      padding: 11px;
+      background: #7C50C8;
+      border: none;
+      border-radius: 9px;
+      color: white;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-submit:hover { background: #6B3DB8; }
+    .btn-submit:disabled { background: #b9a0e0; cursor: not-allowed; }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1230;
+      color: white;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+      z-index: 3000;
+      transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(80, 40, 160, 0.25);
+    }
+
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Timestamp on member card ── */
+    .member-updated {
+      font-size: 10px;
+      color: #c0bad4;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Sort bar ── */
+    #sort-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px 4px;
+    }
+
+    #sort-bar label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #c0bad4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    #sort-select {
+      flex: 1;
+      padding: 4px 24px 4px 8px;
+      border: 1.5px solid #ece9f5;
+      border-radius: 7px;
+      font-size: 11.5px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: #3d2e5e;
+      background: #faf9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23b0a8c4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 7px center no-repeat;
+      appearance: none;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    #sort-select:focus { border-color: #7C50C8; }
+    #sort-select.sorted { border-color: #7C50C8; background-color: #f3eeff; color: #7C50C8; }
+
+    /* ── Zoom-to-all map button ── */
+    #zoom-all-btn {
+      position: absolute;
+      bottom: 52px;
+      right: 10px;
+      z-index: 999;
+      width: 34px;
+      height: 34px;
+      background: white;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444;
+      transition: background 0.15s, color 0.15s;
+      box-shadow: none;
+    }
+
+    #zoom-all-btn:hover { background: #f3eeff; color: #7C50C8; border-color: #7C50C8; }
+
+    /* ── Member list header (search row + manage button) ── */
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 16px 0;
+    }
+
+    .list-header-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #c0bad4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    #manage-btn {
+      font-size: 11.5px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      color: #9b93b0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0;
+      transition: color 0.15s;
+    }
+
+    #manage-btn:hover { color: #7C50C8; }
+    #manage-btn.active { color: #e05252; font-weight: 600; }
+
+    /* ── Checkbox on each card in manage mode ── */
+    .member-checkbox {
+      display: none;
+      width: 17px;
+      height: 17px;
+      border-radius: 4px;
+      border: 2px solid #d4cde8;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      margin-right: 2px;
+    }
+
+    .select-mode .member-checkbox { display: flex; }
+    .select-mode .member-actions  { display: none !important; }
+
+    .member-item.selected .member-checkbox {
+      background: #7C50C8;
+      border-color: #7C50C8;
+    }
+
+    /* ── Bulk action bar ── */
+    #bulk-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #1a1230;
+      color: white;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      gap: 10px;
+    }
+
+    #bulk-bar.visible { display: flex; }
+
+    #bulk-bar-label { flex: 1; font-weight: 500; }
+
+    #bulk-delete-btn {
+      padding: 7px 14px;
+      background: #e05252;
+      border: none;
+      border-radius: 7px;
+      color: white;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    #bulk-delete-btn:hover { background: #c93e3e; }
+    #bulk-delete-btn:disabled { background: #6b4a4a; cursor: not-allowed; }
+
+    /* ── Tenure badge ── */
+    .tenure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 7px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Social link icons on cards ── */
+    .social-links { display: flex; gap: 4px; margin-top: 4px; }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: #f0eaff;
+      color: #7C50C8;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 700;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .social-link:hover { background: #7C50C8; color: white; }
+
+    /* ── Mobile bottom sheet sidebar ── */
+    .sidebar-handle {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+      gap: 10px;
+    }
+
+    .sidebar-handle-bar {
+      width: 36px;
+      height: 4px;
+      background: #d4cde8;
+      border-radius: 2px;
+      transition: background 0.15s;
+    }
+
+    .sidebar-handle-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #9b93b0;
+      letter-spacing: 0.3px;
+    }
+
+    .sidebar-handle:hover .sidebar-handle-bar { background: #9b93b0; }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+
+      #sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100% !important;
+        min-width: unset !important;
+        height: 72vh;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(calc(100% - 68px));
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        z-index: 1001;
+        box-shadow: 0 -4px 32px rgba(80, 40, 160, 0.18);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #sidebar.mobile-open { transform: translateY(0); }
+
+      #map { width: 100%; height: 100vh; }
+
+      .sidebar-handle { display: flex; }
+
+      .sidebar-header { padding: 10px 20px 14px; }
+
+      .add-btn-wrap {
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+      }
+    }
+
+    /* ── Onboarding tour overlay ── */
+    #tour-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 8000;
+    }
+
+    #tour-overlay.active { display: block; }
+
+    .tour-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 10, 40, 0.55);
+      cursor: pointer;
+    }
+
+    .tour-card {
+      position: absolute;
+      background: white;
+      border-radius: 16px;
+      padding: 22px 24px 20px;
+      width: 290px;
+      box-shadow: 0 16px 48px rgba(80, 40, 160, 0.28);
+      animation: slideUp 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
+      z-index: 1;
+    }
+
+    .tour-step-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #b0a8c4;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .tour-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #1a1230;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .tour-text {
+      font-size: 12.5px;
+      color: #6b5f80;
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    .tour-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tour-dots { display: flex; gap: 5px; align-items: center; }
+
+    .tour-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #e0daf0;
+      transition: background 0.15s, width 0.15s;
+    }
+
+    .tour-dot.active { background: #7C50C8; width: 16px; border-radius: 3px; }
+
+    .tour-btn-skip {
+      font-size: 12px;
+      color: #b0a8c4;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      padding: 0;
+      margin-right: 10px;
+      transition: color 0.15s;
+    }
+
+    .tour-btn-skip:hover { color: #7a6e8e; }
+
+    .tour-btn-next {
+      padding: 8px 16px;
+      background: #7C50C8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .tour-btn-next:hover { background: #6B3DB8; }
+
+    /* ── Cluster override – hide leaflet default cluster styles ── */
+    .marker-cluster { background: none !important; box-shadow: none !important; }
+    .marker-cluster div { background: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────── SIDEBAR ─────────────────── -->
+<aside id="sidebar">
+  <!-- Mobile drag handle — tapping opens/closes the bottom sheet -->
+  <div class="sidebar-handle" onclick="toggleMobileSidebar()">
+    <div class="sidebar-handle-bar"></div>
+    <span class="sidebar-handle-label" id="handle-label">Team directory</span>
+    <div class="sidebar-handle-bar"></div>
+  </div>
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">C</div>
+      <div class="logo-wordmark">WithClutch</div>
+    </div>
+    <div class="page-title">Where in the World 🌍</div>
+    <div class="page-subtitle">Meet the Clutch team, wherever they are</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" id="stat-members">—</div>
+      <div class="stat-label">People</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num" id="stat-countries">—</div>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num" id="stat-cities">—</div>
+      <div class="stat-label">Cities</div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="search-input" placeholder="Search by name, role, or city…" />
+  </div>
+
+  <!-- Team filter pills — shown once data loads -->
+  <div id="filter-pills-wrap">
+    <div id="filter-pills"></div>
+  </div>
+
+  <!-- Year + Country filters — shown once data loads -->
+  <div id="secondary-filters">
+    <select class="secondary-filter-select" id="filter-year" onchange="onSecondaryFilterChange()">
+      <option value="all">All years</option>
+    </select>
+    <select class="secondary-filter-select" id="filter-country" onchange="onSecondaryFilterChange()">
+      <option value="all">All countries</option>
+    </select>
+  </div>
+
+  <!-- Sort bar -->
+  <div id="sort-bar">
+    <label for="sort-select">Sort</label>
+    <select id="sort-select" onchange="onSortChange()">
+      <option value="default">Default</option>
+      <option value="name-az">Name A → Z</option>
+      <option value="city-az">City A → Z</option>
+      <option value="tenure-asc">Tenure: newest first</option>
+      <option value="tenure-desc">Tenure: oldest first</option>
+    </select>
+  </div>
+
+  <!-- List header with manage toggle -->
+  <div class="list-header">
+    <span class="list-header-label" id="list-count-label">Team</span>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button id="select-all-btn" onclick="selectAllVisible()">Select all</button>
+      <button id="manage-btn" onclick="toggleManageMode()">Manage</button>
+    </div>
+  </div>
+
+  <div id="member-list"></div>
+
+  <!-- Bulk action bar (visible in manage mode with selections) -->
+  <div id="bulk-bar">
+    <span id="bulk-bar-label">0 selected</span>
+    <button id="bulk-delete-btn" onclick="deleteSelected()">Delete selected</button>
+  </div>
+
+  <div class="add-btn-wrap">
+    <button id="add-btn" onclick="openModal()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add yourself to the map
+    </button>
+  </div>
+</aside>
+
+<!-- ─────────────────── MAP ─────────────────── -->
+<div id="map"></div>
+<button id="zoom-all-btn" title="Zoom to see everyone" onclick="zoomToAll()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V3h4"/><path d="M17 3h4v4"/><path d="M21 17v4h-4"/><path d="M7 21H3v-4"/></svg>
+</button>
+
+<!-- ─────────────────── MODAL ─────────────────── -->
+<div id="modal-overlay" onclick="closeOnOverlay(event)">
+  <div id="modal">
+    <div class="modal-title" id="modal-title">Add yourself 📍</div>
+    <div class="modal-subtitle">Moving? Just fill this out again to update your pin.</div>
+
+    <!-- Returning user banner (shown when email is recognised) -->
+    <div id="returning-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C50C8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span id="returning-text">You're already on the map! Your details are pre-filled below — just update anything that's changed.</span>
+    </div>
+
+    <!-- Email — used as unique ID -->
+    <div class="form-group">
+      <label class="form-label">Work email</label>
+      <div class="email-wrap" id="email-wrap">
+        <input type="text" class="email-prefix" id="f-email"
+               placeholder="tim.lin"
+               autocomplete="off"
+               spellcheck="false"
+               onblur="checkReturningUser()" />
+        <span class="email-suffix">@withclutch.com</span>
+      </div>
+      <div class="field-error" id="err-email">Please enter your username</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Full name</label>
+      <input type="text" class="form-input" id="f-name" placeholder="Jane Smith" autocomplete="name" />
+      <div class="field-error" id="err-name">Please enter your name</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Month joined</label>
+        <select class="form-input" id="f-month">
+          <option value="" disabled selected>Month…</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+        <div class="field-error" id="err-month">Please select a month</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year joined</label>
+        <input type="number" class="form-input" id="f-year" placeholder="2024" min="2020" />
+        <div class="field-error" id="err-year">Please enter a valid year</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Team</label>
+      <select class="form-input" id="f-role">
+        <option value="" disabled selected>Select your team…</option>
+        <option value="Customer Success">Customer Success</option>
+        <option value="Design">Design</option>
+        <option value="Engagement Managers">Engagement Managers</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Finance">Finance</option>
+        <option value="Legal">Legal</option>
+        <option value="Marketing">Marketing</option>
+        <option value="People">People</option>
+        <option value="Product">Product</option>
+        <option value="Product Evangelist">Product Evangelist</option>
+        <option value="Professional Services">Professional Services</option>
+        <option value="Product Enablement">Product Enablement</option>
+        <option value="Sales">Sales</option>
+        <option value="Sales Engineering">Sales Engineering</option>
+        <option value="Special Projects">Special Projects</option>
+      </select>
+      <div class="field-error" id="err-role">Please select your team</div>
+    </div>
+
+    <!-- City with autocomplete -->
+    <div class="form-group">
+      <label class="form-label">City</label>
+      <div class="city-wrap">
+        <input type="text" class="form-input" id="f-city"
+               placeholder="Start typing your city…"
+               autocomplete="off"
+               oninput="onCityInput()"
+               onfocus="onCityFocus()" />
+        <div id="city-dropdown"></div>
+      </div>
+      <!-- Confirmed selection tag -->
+      <div id="city-selected-tag">
+        <span>📍</span>
+        <span id="city-selected-label"></span>
+        <button onclick="clearCitySelection()" title="Change city">✕</button>
+      </div>
+      <div class="field-error" id="err-city">Please select a city from the dropdown</div>
+    </div>
+
+    <!-- Optional social links -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Slack handle <span class="optional">(optional)</span></label>
+        <div class="email-wrap">
+          <span class="email-suffix" style="padding-left:12px;padding-right:0;color:#b0a8c4;">@</span>
+          <input type="text" class="email-prefix" id="f-slack" placeholder="jane.smith" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">LinkedIn <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="f-linkedin" placeholder="username or full URL" autocomplete="off" spellcheck="false" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" id="submit-btn" onclick="handleSubmit()">
+        Drop my pin ✦
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────── TOAST ─────────────────── -->
+<div id="toast"></div>
+
+<!-- ─────────────────── ONBOARDING TOUR ─────────────────── -->
+<div id="tour-overlay">
+  <div class="tour-backdrop" onclick="skipTour()"></div>
+  <div class="tour-card" id="tour-card">
+    <div class="tour-step-label" id="tour-step-label">Step 1 of 4</div>
+    <div class="tour-title"     id="tour-title"></div>
+    <div class="tour-text"      id="tour-text"></div>
+    <div class="tour-actions">
+      <div class="tour-dots" id="tour-dots"></div>
+      <div style="display:flex;align-items:center;">
+        <button class="tour-btn-skip" onclick="skipTour()">Skip</button>
+        <button class="tour-btn-next" id="tour-btn-next" onclick="advanceTour()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// CONFIG — fill these in after setting up Google Sheets
+// ════════════════════════════════════════════════════════════
+const CONFIG = {
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwrdOniKuPB4aJU8MHhxwn1vI4VnVgSevonBCOqe6m1tr0fAOg5XyTpkbAAQ5YFNQ1wUQ/exec',
+  SHEET_CSV_URL:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqcS1tZVZIsHieENarjwy62Y-E5Unzm15vmCCBgTsxGLhXhF3tfQlgWrvEmV7MGuN22LbjlpXysfiV/pub?gid=0&single=true&output=csv',
+  DOMAIN:          'withclutch.com',  // Only allow emails from this domain
+  ADMIN_PASSWORD:  'noodles',         // Used for bulk delete
+};
+
+// Co-founders are always present as seed data.
+// Sheet entries with matching names override them once loaded.
+let members = [
+  { name: 'Nicky Hinrichsen', role: 'Co-Founder', city: 'New York City, United States', year: '2020-05', lat: 40.7128, lng: -74.0060, photo: '', email: '', updatedAt: '', slack: '', linkedin: '' },
+  { name: 'Chris Coleman',    role: 'Co-Founder', city: 'Salt Lake City, United States', year: '2020-05', lat: 40.7608, lng: -111.8910, photo: '', email: '', updatedAt: '', slack: '', linkedin: '' },
+];
+
+// ════════════════════════════════════════════════════════════
+// AVATAR HELPERS
+// ════════════════════════════════════════════════════════════
+const PALETTE = ['#7C50C8','#9162D6','#5B38A8','#A673E0','#6440B8','#B288E8','#4A2A98'];
+
+function avatarColor(name)   { return PALETTE[name.charCodeAt(0) % PALETTE.length]; }
+function memberColor(member) { return member.role === 'Co-Founder' ? '#1a1230' : avatarColor(member.name); }
+function initials(name)     { return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
+
+// ── MD5 (needed for Gravatar URLs) ──
+function md5(s){function L(k,d){return(k<<d)|(k>>>(32-d))}function K(G,k){var I,d,F,H,x;F=(G&2147483648);H=(k&2147483648);I=(G&1073741824);d=(k&1073741824);x=(G&1073741823)+(k&1073741823);if(I&d){return(x^2147483648^F^H)}if(I|d){if(x&1073741824){return(x^3221225472^F^H)}else{return(x^1073741824^F^H)}}else{return(x^F^H)}}function r(d,F,k,I,G,H,x){d=K(d,K(K((F&k)|(~F&I),G),x));return K(L(d,H),F)}function q(d,F,k,I,G,H,x){d=K(d,K(K((F&I)|(k&~I),G),x));return K(L(d,H),F)}function p(d,F,k,I,G,H,x){d=K(d,K(K(F^k^I,G),x));return K(L(d,H),F)}function n(d,F,k,I,G,H,x){d=K(d,K(K(k^(F|~I),G),x));return K(L(d,H),F)}function u(G){var F=G.length,k=G.length+8;var d=(k-(k%64))/64;var I=(d+1)*16;var x=Array(I-1);var H=0;var G2=0;while(G2<F){var m=(G2-(G2%4))/4;H=G2%4*8;x[m]=(x[m]|(G.charCodeAt(G2)<<H));G2++}var m2=(G2-(G2%4))/4;x[m2]=(x[m2]|(128<<(G2%4*8)));x[I-2]=F<<3;x[I-1]=F>>>29;return x}var e=Array();var g,f,h,j;var a=1732584193;var b=4023233417;var c=2562383102;var d=271733878;e=u(s);for(g=0;g<e.length;g+=16){f=a;h=b;j=c;var k=d;a=r(a,b,c,d,e[g+0],7,3614090360);d=r(d,a,b,c,e[g+1],12,3905402710);c=r(c,d,a,b,e[g+2],17,606105819);b=r(b,c,d,a,e[g+3],22,3250441966);a=r(a,b,c,d,e[g+4],7,4118548399);d=r(d,a,b,c,e[g+5],12,1200080426);c=r(c,d,a,b,e[g+6],17,2821735955);b=r(b,c,d,a,e[g+7],22,4249261313);a=r(a,b,c,d,e[g+8],7,1770035416);d=r(d,a,b,c,e[g+9],12,2336552879);c=r(c,d,a,b,e[g+10],17,4294925233);b=r(b,c,d,a,e[g+11],22,2304563134);a=r(a,b,c,d,e[g+12],7,1804603682);d=r(d,a,b,c,e[g+13],12,4254626195);c=r(c,d,a,b,e[g+14],17,2792965006);b=r(b,c,d,a,e[g+15],22,1236535329);a=q(a,b,c,d,e[g+1],5,4129170786);d=q(d,a,b,c,e[g+6],9,3225465664);c=q(c,d,a,b,e[g+11],14,643717713);b=q(b,c,d,a,e[g+0],20,3921069994);a=q(a,b,c,d,e[g+5],5,3593408605);d=q(d,a,b,c,e[g+10],9,38016083);c=q(c,d,a,b,e[g+15],14,3634488961);b=q(b,c,d,a,e[g+4],20,3889429448);a=q(a,b,c,d,e[g+9],5,568446438);d=q(d,a,b,c,e[g+14],9,3275163606);c=q(c,d,a,b,e[g+3],14,4107603335);b=q(b,c,d,a,e[g+8],20,1163531501);a=q(a,b,c,d,e[g+13],5,2850285829);d=q(d,a,b,c,e[g+2],9,4243563512);c=q(c,d,a,b,e[g+7],14,1735328473);b=q(b,c,d,a,e[g+12],20,2368359562);a=p(a,b,c,d,e[g+5],4,4294588738);d=p(d,a,b,c,e[g+8],11,2272392833);c=p(c,d,a,b,e[g+11],16,1839030562);b=p(b,c,d,a,e[g+14],23,4259657740);a=p(a,b,c,d,e[g+1],4,2763975236);d=p(d,a,b,c,e[g+4],11,1272893353);c=p(c,d,a,b,e[g+7],16,4139469664);b=p(b,c,d,a,e[g+10],23,3200236656);a=p(a,b,c,d,e[g+13],4,681279174);d=p(d,a,b,c,e[g+0],11,3936430074);c=p(c,d,a,b,e[g+3],16,3572445317);b=p(b,c,d,a,e[g+6],23,76029189);a=p(a,b,c,d,e[g+9],4,3654602809);d=p(d,a,b,c,e[g+12],11,3873151461);c=p(c,d,a,b,e[g+15],16,530742520);b=p(b,c,d,a,e[g+2],23,3299628645);a=n(a,b,c,d,e[g+0],6,4096336452);d=n(d,a,b,c,e[g+7],10,1126891415);c=n(c,d,a,b,e[g+14],15,2878612391);b=n(b,c,d,a,e[g+5],21,4237533241);a=n(a,b,c,d,e[g+12],6,1700485571);d=n(d,a,b,c,e[g+3],10,2399980690);c=n(c,d,a,b,e[g+10],15,4293915773);b=n(b,c,d,a,e[g+1],21,2240044497);a=n(a,b,c,d,e[g+8],6,1873313359);d=n(d,a,b,c,e[g+15],10,4264355552);c=n(c,d,a,b,e[g+6],15,2734768916);b=n(b,c,d,a,e[g+13],21,1309151649);a=n(a,b,c,d,e[g+4],6,4149444226);d=n(d,a,b,c,e[g+11],10,3174756917);c=n(c,d,a,b,e[g+2],15,718787259);b=n(b,c,d,a,e[g+9],21,3951481745);a=K(a,f);b=K(b,h);c=K(c,j);d=K(d,k)}var i='';function t(m){var v='',o,C;for(o=7;o>=0;o--){C=(m>>>(o*4))&0x0F;v+=C.toString(16)}return v}i+=t(a)+t(b)+t(c)+t(d);var w='';for(var y=0;y<i.length;y+=2){w+=String.fromCharCode(parseInt(i.substr(y,2),16))}return btoa(w).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')}
+// Convert base64url back to hex for Gravatar
+function md5hex(s){var h='0123456789abcdef',r='';function add(x,y){var l=(x&0xFFFF)+(y&0xFFFF);return(((x>>16)+(y>>16)+(l>>16))<<16)|(l&0xFFFF)}function rol(n,c){return(n<<c)|(n>>>(32-c))}function cmn(q,a,b,x,s,t){return add(rol(add(add(a,q),add(x,t)),s),b)}function ff(a,b,c,d,x,s,t){return cmn((b&c)|((~b)&d),a,b,x,s,t)}function gg(a,b,c,d,x,s,t){return cmn((b&d)|(c&(~d)),a,b,x,s,t)}function hh(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t)}function ii(a,b,c,d,x,s,t){return cmn(c^(b|(~d)),a,b,x,s,t)}function sb(x){var i,n=((x.length+8)>>6)+1,b=new Array(n*16);for(i=0;i<n*16;i++)b[i]=0;for(i=0;i<x.length;i++)b[i>>2]|=x.charCodeAt(i)<<((i%4)*8);b[i>>2]|=0x80<<((i%4)*8);b[n*16-2]=x.length*8;return b}var i,x=sb(s),a=1732584193,b=-271733879,c=-1732584194,d=271733878,oa,ob,oc,od;for(i=0;i<x.length;i+=16){oa=a;ob=b;oc=c;od=d;a=ff(a,b,c,d,x[i],7,-680876936);d=ff(d,a,b,c,x[i+1],12,-389564586);c=ff(c,d,a,b,x[i+2],17,606105819);b=ff(b,c,d,a,x[i+3],22,-1044525330);a=ff(a,b,c,d,x[i+4],7,-176418897);d=ff(d,a,b,c,x[i+5],12,1200080426);c=ff(c,d,a,b,x[i+6],17,-1473231341);b=ff(b,c,d,a,x[i+7],22,-45705983);a=ff(a,b,c,d,x[i+8],7,1770035416);d=ff(d,a,b,c,x[i+9],12,-1958414417);c=ff(c,d,a,b,x[i+10],17,-42063);b=ff(b,c,d,a,x[i+11],22,-1990404162);a=ff(a,b,c,d,x[i+12],7,1804603682);d=ff(d,a,b,c,x[i+13],12,-40341101);c=ff(c,d,a,b,x[i+14],17,-1502002290);b=ff(b,c,d,a,x[i+15],22,1236535329);a=gg(a,b,c,d,x[i+1],5,-165796510);d=gg(d,a,b,c,x[i+6],9,-1069501632);c=gg(c,d,a,b,x[i+11],14,643717713);b=gg(b,c,d,a,x[i],20,-373897302);a=gg(a,b,c,d,x[i+5],5,-701558691);d=gg(d,a,b,c,x[i+10],9,38016083);c=gg(c,d,a,b,x[i+15],14,-660478335);b=gg(b,c,d,a,x[i+4],20,-405537848);a=gg(a,b,c,d,x[i+9],5,568446438);d=gg(d,a,b,c,x[i+14],9,-1019803690);c=gg(c,d,a,b,x[i+3],14,-187363961);b=gg(b,c,d,a,x[i+8],20,1163531501);a=gg(a,b,c,d,x[i+13],5,-1444681467);d=gg(d,a,b,c,x[i+2],9,-51403784);c=gg(c,d,a,b,x[i+7],14,1735328473);b=gg(b,c,d,a,x[i+12],20,-1926607734);a=hh(a,b,c,d,x[i+5],4,-378558);d=hh(d,a,b,c,x[i+8],11,-2022574463);c=hh(c,d,a,b,x[i+11],16,1839030562);b=hh(b,c,d,a,x[i+14],23,-35309556);a=hh(a,b,c,d,x[i+1],4,-1530992060);d=hh(d,a,b,c,x[i+4],11,1272893353);c=hh(c,d,a,b,x[i+7],16,-155497632);b=hh(b,c,d,a,x[i+10],23,-1094730640);a=hh(a,b,c,d,x[i+13],4,681279174);d=hh(d,a,b,c,x[i],11,-358537222);c=hh(c,d,a,b,x[i+3],16,-722521979);b=hh(b,c,d,a,x[i+6],23,76029189);a=hh(a,b,c,d,x[i+9],4,-640364487);d=hh(d,a,b,c,x[i+12],11,-421815835);c=hh(c,d,a,b,x[i+15],16,530742520);b=hh(b,c,d,a,x[i+2],23,-995338651);a=ii(a,b,c,d,x[i],6,-198630844);d=ii(d,a,b,c,x[i+7],10,1126891415);c=ii(c,d,a,b,x[i+14],15,-1416354905);b=ii(b,c,d,a,x[i+5],21,-57434055);a=ii(a,b,c,d,x[i+12],6,1700485571);d=ii(d,a,b,c,x[i+3],10,-1894986606);c=ii(c,d,a,b,x[i+10],15,-1051523);b=ii(b,c,d,a,x[i+1],21,-2054922799);a=ii(a,b,c,d,x[i+8],6,1873313359);d=ii(d,a,b,c,x[i+15],10,-30611744);c=ii(c,d,a,b,x[i+6],15,-1560198380);b=ii(b,c,d,a,x[i+13],21,1309151649);a=ii(a,b,c,d,x[i+4],6,-145523070);d=ii(d,a,b,c,x[i+11],10,-1120210379);c=ii(c,d,a,b,x[i+2],15,718787259);b=ii(b,c,d,a,x[i+9],21,-343485551);a=add(a,oa);b=add(b,ob);c=add(c,oc);d=add(d,od)}function rh(n){var s='';for(var j=0;j<=3;j++)s+=h[(n>>(j*8+4))&0xF]+h[(n>>(j*8))&0xF];return s}return rh(a)+rh(b)+rh(c)+rh(d)}
+
+function gravatarUrl(email, size) {
+  var hash = md5hex(email.trim().toLowerCase());
+  return 'https://www.gravatar.com/avatar/' + hash + '?s=' + (size||80) + '&d=404';
+}
+
+// Called by onerror on gravatar <img> tags — swaps to an initials div
+function onGravatarError(el, ini, color, size, fs) {
+  var div = document.createElement('div');
+  div.style.cssText = 'width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:'+fs+'px;font-family:Inter,sans-serif;flex-shrink:0;overflow:hidden;';
+  div.textContent = ini;
+  if (el.parentNode) el.parentNode.replaceChild(div, el);
+}
+
+// ════════════════════════════════════════════════════════════
+// TENURE BADGE
+// ════════════════════════════════════════════════════════════
+function getTenureBadge(yearVal) {
+  if (!yearVal) return null;
+  const s = String(yearVal);
+  const [y, m] = s.split('-');
+  if (!y || isNaN(parseInt(y))) return null;
+
+  const hasMonth    = !!m;
+  const joinDate    = new Date(parseInt(y), hasMonth ? parseInt(m) - 1 : 0, 1);
+  const now         = new Date();
+  const totalMonths = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth());
+  if (totalMonths < 0) return null;
+
+  // Under 3 months → always show New hire
+  if (totalMonths < 3) return { label: '🌱 New hire', bg: '#dcfce7', color: '#15803d' };
+
+  const yrs           = Math.floor(totalMonths / 12);
+  // onAnniversary: we're in the exact month they joined, in a year-multiple
+  const onAnniversary = hasMonth && (totalMonths % 12 === 0) && yrs >= 1;
+
+  // Emoji + colours per year milestone
+  const MILESTONES = {
+    1:  { e: '🌟', bg: '#fefce8', color: '#854d0e' },
+    2:  { e: '⭐', bg: '#fef9c3', color: '#854d0e' },
+    3:  { e: '🚀', bg: '#ede9fe', color: '#5B21B6' },
+    4:  { e: '🔥', bg: '#fee2e2', color: '#991b1b' },
+    5:  { e: '💎', bg: '#e0f2fe', color: '#075985' },
+    6:  { e: '🏆', bg: '#fdf4ff', color: '#7e22ce' },
+    7:  { e: '👑', bg: '#fef9c3', color: '#854d0e' },
+    8:  { e: '🦅', bg: '#f0fdf4', color: '#166534' },
+    9:  { e: '🌙', bg: '#f8fafc', color: '#334155' },
+    10: { e: '🪐', bg: '#ede9fe', color: '#4c1d95' },
+  };
+
+  function milestone(yrs, suffix) {
+    const m   = MILESTONES[Math.min(yrs, 10)];
+    const num = yrs === 1 ? '1 year' : `${yrs}${suffix} years`;
+    const party = (!suffix && onAnniversary) ? ' 🎉' : '';
+    return { label: `${m.e} ${num}${party}`, bg: m.bg, color: m.color };
+  }
+
+  if (onAnniversary) return milestone(yrs, '');
+
+  // Not on anniversary — no badge under 4 completed years
+  if (yrs < 4) return null;
+
+  // 4+ years between anniversaries → show "X+ years"
+  return milestone(yrs, '+');
+}
+
+// ════════════════════════════════════════════════════════════
+// SOCIAL LINK HELPERS
+// ════════════════════════════════════════════════════════════
+function normalizeLinkedIn(val) {
+  if (!val) return null;
+  const v = val.trim();
+  // Already a full URL
+  if (v.startsWith('http')) return v;
+  // linkedin.com/... or www.linkedin.com/...
+  if (v.includes('linkedin.com/')) return 'https://' + v.replace(/^\/+/, '');
+  // /in/username or in/username
+  const inMatch = v.match(/^\/?(in\/)?(.+)$/i);
+  const username = inMatch ? inMatch[2].replace(/\/.*$/, '') : v;
+  return 'https://www.linkedin.com/in/' + username;
+}
+
+function slackCopyHandle(handle) {
+  // Copy @handle to clipboard
+  navigator.clipboard?.writeText('@' + handle).then(() => showToast('Slack handle copied: @' + handle));
+}
+
+// ════════════════════════════════════════════════════════════
+// MAP INIT
+// ════════════════════════════════════════════════════════════
+const map = L.map('map', {
+  center: [15, -80],
+  zoom: 3,
+  minZoom: 2,
+  zoomControl: false,
+  attributionControl: true,
+});
+
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; <a href="https://www.esri.com">Esri</a>',
+  maxZoom: 16,
+}).addTo(map);
+
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+// ── Marker cluster group ──
+const markerCluster = L.markerClusterGroup({
+  maxClusterRadius: 55,
+  disableClusteringAtZoom: 9,
+  spiderfyOnMaxZoom: true,
+  showCoverageOnHover: false,
+  iconCreateFunction(cluster) {
+    const count = cluster.getChildCount();
+    const size  = count < 10 ? 44 : count < 50 ? 50 : 56;
+    return L.divIcon({
+      html: `<div style="width:${size}px;height:${size}px;border-radius:50%;
+        background:#7C50C8;border:3px solid white;
+        box-shadow:0 3px 12px rgba(80,40,160,0.35);
+        color:white;font-weight:700;font-size:13px;
+        font-family:'Inter',sans-serif;
+        display:flex;align-items:center;justify-content:center;">${count}</div>`,
+      className: '',
+      iconSize:   [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  },
+});
+markerCluster.addTo(map);
+
+// ════════════════════════════════════════════════════════════
+// MARKERS
+// ════════════════════════════════════════════════════════════
+let leafletMarkers = [];
+let activeIndex    = null;
+
+function makeMarkerIcon(member) {
+  const color  = memberColor(member);
+  const ini    = initials(member.name);
+  const imgUrl = member.photo || (member.email ? gravatarUrl(member.email, 80) : null);
+  const inner  = imgUrl
+    ? `<img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="onGravatarError(this,'${ini}','${color}',38,11)" />`
+    : `<span>${ini}</span>`;
+
+  const html = `
+    <div style="width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+      border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.22);background:${color};
+      display:flex;align-items:center;justify-content:center;overflow:hidden;">
+      <div style="transform:rotate(45deg);width:100%;height:100%;
+        display:flex;align-items:center;justify-content:center;
+        color:white;font-weight:700;font-size:11px;font-family:'Inter',sans-serif;overflow:hidden;">
+        ${inner}
+      </div>
+    </div>`;
+
+  return L.divIcon({ html, className: '', iconSize: [38,38], iconAnchor: [19,38], popupAnchor: [0,-42] });
+}
+
+function makePopupContent(member) {
+  const color  = memberColor(member);
+  const ini    = initials(member.name);
+  const imgUrl = member.photo || (member.email ? gravatarUrl(member.email, 92) : null);
+  const avatar = imgUrl
+    ? `<img src="${imgUrl}" style="width:46px;height:46px;object-fit:cover;border-radius:50%;flex-shrink:0;" onerror="onGravatarError(this,'${ini}','${color}',46,15)" />`
+    : `<div style="width:46px;height:46px;border-radius:50%;background:${color};color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-family:'Inter',sans-serif;flex-shrink:0;">${ini}</div>`;
+
+  const tenure   = getTenureBadge(member.year);
+  const liUrl    = normalizeLinkedIn(member.linkedin);
+  const slackH   = member.slack || '';
+  const socialRow = (liUrl || slackH) ? `
+    <div style="display:flex;gap:7px;margin-top:9px;padding-top:9px;border-top:1px solid #f0eef8;flex-wrap:wrap;">
+      ${slackH ? `<button onclick="slackCopyHandle('${slackH.replace(/'/g,"\\'")}');this.closest('.leaflet-popup').style.display='none'" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#f0eaff;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#7C50C8;cursor:pointer;" title="Copy Slack handle"><svg width="12" height="12" viewBox="0 0 24 24" fill="#7C50C8"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>@${slackH}</button>` : ''}
+      ${liUrl ? `<a href="${liUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#f0eaff;border-radius:6px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#7C50C8;text-decoration:none;" title="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="#7C50C8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>` : ''}
+    </div>` : '';
+
+  return `
+    <div style="font-family:'Inter',sans-serif;padding:16px 18px;min-width:210px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        ${avatar}
+        <div>
+          <div style="font-weight:700;font-size:14.5px;color:#1a1230;">${member.name}</div>
+          <div style="font-size:11.5px;color:#9b93b0;margin-top:2px;">${member.role}</div>
+          ${tenure ? `<span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:${tenure.bg};color:${tenure.color};">${tenure.label}</span>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;border-top:1px solid #f0eef8;padding-top:10px;">
+        <div style="display:flex;align-items:center;gap:7px;font-size:12px;">
+          <span>📍</span><span style="color:#7C50C8;font-weight:500;">${member.city}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#888;">
+          <span>🗓</span><span>Joined ${formatJoinDate(member.year)}</span>
+        </div>
+        ${member.updatedAt ? `<div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#c0bad4;"><span>✏️</span><span>Updated ${formatDate(member.updatedAt)}</span></div>` : ''}
+      </div>
+      ${socialRow}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+function renderAll() {
+  // Build all marker objects (not yet added to the cluster)
+  markerCluster.clearLayers();
+  leafletMarkers = [];
+
+  members.forEach((member, i) => {
+    const marker = L.marker([member.lat, member.lng], { icon: makeMarkerIcon(member) });
+    marker.bindPopup(makePopupContent(member), { maxWidth: 300 });
+    marker.on('click', () => setActive(i));
+    leafletMarkers.push(marker);
+  });
+
+  renderFilterPills();
+  renderSecondaryFilters();
+  renderListFiltered(); // calls renderMapMarkers() internally — adds only filtered markers
+  updateStats();
+}
+
+// Add only the currently-filtered members' markers to the cluster
+function renderMapMarkers() {
+  markerCluster.clearLayers();
+  const filteredSet = new Set(getFilteredList().map(m => members.indexOf(m)));
+  leafletMarkers.forEach((marker, i) => {
+    if (filteredSet.has(i)) markerCluster.addLayer(marker);
+  });
+
+  // Fit map to the visible pins
+  const visible = [...filteredSet].map(i => leafletMarkers[i]).filter(Boolean);
+  if (visible.length === 1) {
+    map.flyTo(leafletMarkers[[...filteredSet][0]].getLatLng(), 7, { duration: 1.2, easeLinearity: 0.25 });
+  } else if (visible.length > 1) {
+    const group = L.featureGroup(visible);
+    map.fitBounds(group.getBounds().pad(0.25), { maxZoom: 7 });
+  }
+}
+
+function renderList(list) {
+  const el = document.getElementById('member-list');
+  el.innerHTML = '';
+  if (selectMode) el.classList.add('select-mode');
+  else el.classList.remove('select-mode');
+
+  // Update count label
+  const total = activeFilter === 'all' ? members.length : members.filter(m => m.role === activeFilter).length;
+  document.getElementById('list-count-label').textContent =
+    activeFilter === 'all' ? `Team · ${members.length}` : `${activeFilter} · ${total}`;
+
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state">No teammates found</div>';
+    return;
+  }
+
+  list.forEach(member => {
+    const i     = members.indexOf(member);
+    const color = memberColor(member);
+    const div   = document.createElement('div');
+    div.className = 'member-item' + (i === activeIndex ? ' active' : '');
+    div.setAttribute('data-index', i);
+
+    const ini    = initials(member.name);
+    const imgUrl = member.photo || (member.email ? gravatarUrl(member.email, 80) : null);
+    const avatarInner = imgUrl
+      ? `<img src="${imgUrl}" alt="${member.name}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" onerror="onGravatarError(this,'${ini}','${color}',40,14)" />`
+      : ini;
+
+    const updatedStr = member.updatedAt ? formatDate(member.updatedAt) : '';
+    const tenure     = getTenureBadge(member.year);
+    const liUrl      = normalizeLinkedIn(member.linkedin);
+    const slackH     = member.slack || '';
+
+    const socialHtml = (slackH || liUrl) ? `
+      <div class="social-links">
+        ${slackH ? `<button class="social-link" title="Copy Slack handle: @${slackH}" onclick="event.stopPropagation();slackCopyHandle('${slackH.replace(/'/g,"\\'")}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></button>` : ''}
+        ${liUrl ? `<a class="social-link" href="${liUrl}" target="_blank" rel="noopener" title="LinkedIn" onclick="event.stopPropagation()"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>` : ''}
+      </div>` : '';
+
+    div.innerHTML = `
+      <div class="member-checkbox" onclick="event.stopPropagation(); toggleSelectItem(${i})">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="avatar" style="background:${color};">${avatarInner}</div>
+      <div class="member-info">
+        <div class="member-name">${member.name}</div>
+        <div class="member-role">${member.role}${tenure ? ` &nbsp;<span class="tenure-badge" style="background:${tenure.bg};color:${tenure.color};">${tenure.label}</span>` : ''}</div>
+        <div class="member-location">📍 ${member.city}</div>
+        ${updatedStr ? `<div class="member-updated">Updated ${updatedStr}</div>` : ''}
+        ${socialHtml}
+      </div>
+      <div class="member-actions">
+        <button class="action-btn edit-btn" title="Edit" onclick="event.stopPropagation(); editMember(${i})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="action-btn delete-btn" title="Remove" onclick="event.stopPropagation(); deleteMember(${i})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+
+    if (selectedItems.has(i)) div.classList.add('selected');
+    div.onclick = () => selectMode ? toggleSelectItem(i) : setActive(i);
+    el.appendChild(div);
+  });
+}
+
+function setActive(index) {
+  activeIndex = index;
+  const member = members[index];
+  maybeOpenMobileSidebar();
+
+  document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.member-item').forEach(el => {
+    if (el.querySelector('.member-name')?.textContent === member.name) el.classList.add('active');
+  });
+
+  map.flyTo([member.lat, member.lng], 8, { duration: 1.2, easeLinearity: 0.25 });
+  setTimeout(() => leafletMarkers[index]?.openPopup(), 1000);
+
+  document.querySelectorAll('.member-item').forEach(el => {
+    if (el.querySelector('.member-name')?.textContent === member.name) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+}
+
+function updateStats() {
+  document.getElementById('stat-members').textContent = members.length;
+  const countries = new Set(members.map(m => {
+    const parts = m.city.split(',');
+    return parts[parts.length - 1].trim();
+  }));
+  document.getElementById('stat-countries').textContent = countries.size;
+  document.getElementById('stat-cities').textContent = new Set(members.map(m => m.city)).size;
+}
+
+// ════════════════════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════════════════════
+document.getElementById('search-input').addEventListener('input', function () {
+  renderListFiltered();
+});
+
+// ════════════════════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════════════════════
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-email').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  resetForm();
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function resetForm() {
+  ['f-email','f-name','f-city','f-year','f-month','f-slack','f-linkedin'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('error');
+  });
+  document.getElementById('email-wrap').classList.remove('error');
+  // Reset select to placeholder
+  const roleEl = document.getElementById('f-role');
+  roleEl.selectedIndex = 0;
+  roleEl.classList.remove('error');
+  ['err-email','err-name','err-role','err-city','err-year','err-month'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('returning-banner').classList.remove('visible');
+  document.getElementById('modal-title').textContent = 'Add yourself 📍';
+  clearCitySelection();
+  closeCityDropdown();
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = false;
+  btn.innerHTML = 'Drop my pin ✦';
+}
+
+// ════════════════════════════════════════════════════════════
+// RETURNING USER — check email on blur
+// ════════════════════════════════════════════════════════════
+function checkReturningUser() {
+  const prefix = document.getElementById('f-email').value.trim().toLowerCase();
+  const email  = prefix ? `${prefix}@${CONFIG.DOMAIN}` : '';
+  const banner = document.getElementById('returning-banner');
+  const title  = document.getElementById('modal-title');
+
+  if (!prefix) { banner.classList.remove('visible'); return; }
+
+  const existing = members.find(m => m.email?.toLowerCase() === email);
+  if (existing) {
+    // Pre-fill all fields
+    document.getElementById('f-name').value = existing.name;
+    document.getElementById('f-role').value = existing.role;
+    const [ey, em] = String(existing.year || '').split('-');
+    document.getElementById('f-year').value  = ey || '';
+    document.getElementById('f-month').value = em || '';
+
+    // Pre-fill city selection
+    selectedCity = { lat: existing.lat, lng: existing.lng, city: existing.city };
+    document.getElementById('f-city').value = existing.city;
+    showCityTag(existing.city);
+
+    // Pre-fill social links
+    document.getElementById('f-slack').value    = existing.slack    || '';
+    document.getElementById('f-linkedin').value = existing.linkedin || '';
+
+    // Show banner
+    document.getElementById('returning-text').textContent =
+      `Hey ${existing.name.split(' ')[0]}! You're already on the map — update anything that's changed and resubmit.`;
+    banner.classList.add('visible');
+    title.textContent = 'Update your pin 📍';
+  } else {
+    banner.classList.remove('visible');
+    title.textContent = 'Add yourself 📍';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// CITY AUTOCOMPLETE
+// ════════════════════════════════════════════════════════════
+let selectedCity    = null;  // { lat, lng, city } — set when user picks from dropdown
+let autocompleteTimer = null;
+
+function onCityInput() {
+  // If user types after picking from dropdown, reset the confirmed selection
+  selectedCity = null;
+  document.getElementById('city-selected-tag').classList.remove('visible');
+  document.getElementById('f-city').style.display = 'block';
+
+  const query = document.getElementById('f-city').value.trim();
+  clearTimeout(autocompleteTimer);
+
+  if (query.length < 2) { closeCityDropdown(); return; }
+
+  autocompleteTimer = setTimeout(() => fetchCitySuggestions(query), 320);
+}
+
+function onCityFocus() {
+  const query = document.getElementById('f-city').value.trim();
+  if (query.length >= 2 && !selectedCity) fetchCitySuggestions(query);
+}
+
+async function fetchCitySuggestions(query) {
+  const dropdown = document.getElementById('city-dropdown');
+  dropdown.innerHTML = `<div class="city-searching"><div class="spinner" style="border-color:rgba(124,80,200,0.2);border-top-color:#7C50C8;"></div> Searching…</div>`;
+  dropdown.classList.add('open');
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=6&addressdetails=1`;
+    const res  = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    const data = await res.json();
+
+    if (!data?.length) {
+      dropdown.innerHTML = `<div class="city-searching">No results — try a different spelling</div>`;
+      return;
+    }
+
+    dropdown.innerHTML = '';
+    data.forEach(item => {
+      const addr    = item.address || {};
+      const city    = addr.city || addr.town || addr.village || addr.municipality || addr.county || item.display_name.split(',')[0];
+      const country = addr.country || '';
+      const state   = addr.state   || '';
+      const sub     = [state, country].filter(Boolean).join(', ');
+
+      const opt = document.createElement('div');
+      opt.className = 'city-option';
+      opt.innerHTML = `
+        <span class="city-option-pin">📍</span>
+        <div class="city-option-text">
+          <div class="city-option-name">${city}</div>
+          <div class="city-option-country">${sub}</div>
+        </div>`;
+
+      opt.addEventListener('mousedown', e => {
+        e.preventDefault(); // don't blur the input before we capture the click
+        const displayCity = sub ? `${city}, ${country}` : city;
+        pickCity({ lat: parseFloat(item.lat), lng: parseFloat(item.lon), city: displayCity });
+      });
+
+      dropdown.appendChild(opt);
+    });
+  } catch (err) {
+    dropdown.innerHTML = `<div class="city-searching">Couldn't load suggestions</div>`;
+  }
+}
+
+function pickCity(geo) {
+  selectedCity = geo;
+  document.getElementById('f-city').value = '';
+  document.getElementById('f-city').blur();
+  showCityTag(geo.city);
+  closeCityDropdown();
+  document.getElementById('err-city').style.display = 'none';
+  document.getElementById('f-city').classList.remove('error');
+}
+
+function showCityTag(cityName) {
+  document.getElementById('city-selected-label').textContent = cityName;
+  document.getElementById('city-selected-tag').classList.add('visible');
+  document.getElementById('f-city').style.display = 'none';
+}
+
+function clearCitySelection() {
+  selectedCity = null;
+  document.getElementById('city-selected-tag').classList.remove('visible');
+  const cityInput = document.getElementById('f-city');
+  cityInput.style.display = 'block';
+  cityInput.value = '';
+  cityInput.focus();
+}
+
+function closeCityDropdown() {
+  const dd = document.getElementById('city-dropdown');
+  dd.classList.remove('open');
+  dd.innerHTML = '';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.city-wrap')) closeCityDropdown();
+});
+
+// ════════════════════════════════════════════════════════════
+// DATE HELPER
+// ════════════════════════════════════════════════════════════
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Format stored year value ("2024" or "2024-09") for display
+function formatJoinDate(val) {
+  if (!val) return '';
+  const s = String(val);
+  if (s.includes('-')) {
+    const [y, m] = s.split('-');
+    return `${MONTHS[parseInt(m) - 1]} ${y}`;
+  }
+  return s;
+}
+
+// Extract just the year number from "2024" or "2024-09"
+function extractYear(val) {
+  return parseInt(String(val).split('-')[0]);
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    const now = new Date();
+    const diffDays = Math.floor((now - d) / 86400000);
+    if (diffDays < 1)  return 'today';
+    if (diffDays === 1) return 'yesterday';
+    if (diffDays < 7)  return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  } catch (e) { return ''; }
+}
+
+// ════════════════════════════════════════════════════════════
+// MANAGE MODE (mass select + bulk delete)
+// ════════════════════════════════════════════════════════════
+let selectMode    = false;
+let selectedItems = new Set();  // indices into members[]
+
+function toggleManageMode() {
+  if (!selectMode) {
+    const pw = prompt('Enter the admin password to manage team members:');
+    if (pw === null) return;
+    if (pw !== CONFIG.ADMIN_PASSWORD) { alert('Incorrect password.'); return; }
+    selectMode = true;
+    selectedItems.clear();
+    document.getElementById('manage-btn').textContent = 'Done';
+    document.getElementById('manage-btn').classList.add('active');
+    document.getElementById('select-all-btn').style.display = 'inline';
+  } else {
+    selectMode = false;
+    selectedItems.clear();
+    document.getElementById('manage-btn').textContent = 'Manage';
+    document.getElementById('manage-btn').classList.remove('active');
+    document.getElementById('select-all-btn').style.display = 'none';
+    document.getElementById('bulk-bar').classList.remove('visible');
+  }
+  renderListFiltered();
+}
+
+function selectAllVisible() {
+  const visible = getFilteredList();
+  const visibleIndices = visible.map(m => members.indexOf(m));
+  const allSelected = visibleIndices.every(i => selectedItems.has(i));
+
+  if (allSelected) {
+    visibleIndices.forEach(i => selectedItems.delete(i));
+    document.getElementById('select-all-btn').textContent = 'Select all';
+  } else {
+    visibleIndices.forEach(i => selectedItems.add(i));
+    document.getElementById('select-all-btn').textContent = 'Deselect all';
+  }
+
+  renderListFiltered();
+
+  const n = selectedItems.size;
+  const bar = document.getElementById('bulk-bar');
+  if (n > 0) {
+    bar.classList.add('visible');
+    document.getElementById('bulk-bar-label').textContent = `${n} person${n > 1 ? 's' : ''} selected`;
+    document.getElementById('bulk-delete-btn').textContent = `Delete ${n} selected`;
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+function toggleSelectItem(i) {
+  if (!selectMode) return;
+  if (selectedItems.has(i)) selectedItems.delete(i);
+  else selectedItems.add(i);
+
+  // Update card visual
+  document.querySelectorAll('.member-item').forEach(card => {
+    const idx = parseInt(card.getAttribute('data-index'));
+    if (!isNaN(idx)) {
+      card.classList.toggle('selected', selectedItems.has(idx));
+    }
+  });
+
+  // Update bulk bar
+  const n = selectedItems.size;
+  const bar = document.getElementById('bulk-bar');
+  if (n > 0) {
+    bar.classList.add('visible');
+    document.getElementById('bulk-bar-label').textContent =
+      `${n} person${n > 1 ? 's' : ''} selected`;
+    document.getElementById('bulk-delete-btn').textContent =
+      `Delete ${n} selected`;
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+async function deleteSelected() {
+  const n = selectedItems.size;
+  if (!n) return;
+  if (!confirm(`Permanently remove ${n} person${n > 1 ? 's' : ''} from the map?`)) return;
+
+  const btn = document.getElementById('bulk-delete-btn');
+  btn.disabled = true;
+  btn.textContent = 'Deleting…';
+
+  // Delete each from sheet
+  const toDelete = [...selectedItems].map(i => members[i]).filter(m => m.email);
+  for (const m of toDelete) {
+    if (CONFIG.APPS_SCRIPT_URL) {
+      try {
+        await fetch(CONFIG.APPS_SCRIPT_URL, {
+          method:  'POST',
+          mode:    'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ action: 'delete', email: m.email }),
+        });
+      } catch (e) { console.warn('Delete failed for', m.email, e); }
+    }
+  }
+
+  // Remove from local array (descending order to keep indices valid)
+  const sorted = [...selectedItems].sort((a, b) => b - a);
+  sorted.forEach(i => members.splice(i, 1));
+
+  selectedItems.clear();
+  if (activeIndex >= members.length) activeIndex = members.length - 1;
+
+  document.getElementById('bulk-bar').classList.remove('visible');
+  btn.disabled = false;
+  renderAll();
+  showToast(`${n} person${n > 1 ? 's' : ''} removed from the map`);
+}
+
+// ════════════════════════════════════════════════════════════
+// FILTER PILLS
+// ════════════════════════════════════════════════════════════
+let activeFilter = 'all';
+
+function renderFilterPills() {
+  const roles = [...new Set(members.map(m => m.role).filter(Boolean))].sort();
+  const wrap  = document.getElementById('filter-pills-wrap');
+  const pills = document.getElementById('filter-pills');
+
+  if (!roles.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  pills.innerHTML = '';
+
+  // "All" pill
+  const allPill = document.createElement('button');
+  allPill.className = 'filter-pill' + (activeFilter === 'all' ? ' active' : '');
+  allPill.textContent = `All · ${members.length}`;
+  allPill.onclick = () => { activeFilter = 'all'; renderFilterPills(); renderListFiltered(); };
+  pills.appendChild(allPill);
+
+  // One pill per team with count
+  roles.forEach(role => {
+    const count = members.filter(m => m.role === role).length;
+    const pill  = document.createElement('button');
+    pill.className = 'filter-pill' + (activeFilter === role ? ' active' : '');
+    pill.textContent = `${role} · ${count}`;
+    pill.onclick = () => { activeFilter = role; renderFilterPills(); renderListFiltered(); };
+    pills.appendChild(pill);
+  });
+}
+
+function fitMapToFilter() {
+  const list = getFilteredList().filter(m => m.lat && m.lng);
+  if (!list.length) return;
+
+  if (list.length === 1) {
+    map.flyTo([list[0].lat, list[0].lng], 7, { duration: 1.2, easeLinearity: 0.25 });
+    return;
+  }
+
+  const bounds = L.latLngBounds(list.map(m => [m.lat, m.lng]));
+  map.flyToBounds(bounds.pad(0.3), { maxZoom: 7, duration: 1.2, easeLinearity: 0.25 });
+}
+
+// ── Secondary filter state ──
+let activeYear    = 'all';
+let activeCountry = 'all';
+
+function memberCountry(m) {
+  const parts = m.city.split(',');
+  return parts[parts.length - 1].trim();
+}
+
+let activeSort = 'default';
+
+function onSortChange() {
+  activeSort = document.getElementById('sort-select').value;
+  document.getElementById('sort-select').className = activeSort !== 'default' ? 'sorted' : '';
+  renderListFiltered();
+}
+
+function getFilteredList() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  let list = activeFilter === 'all' ? members : members.filter(m => m.role === activeFilter);
+  if (activeYear    !== 'all') list = list.filter(m => String(extractYear(m.year)) === activeYear);
+  if (activeCountry !== 'all') list = list.filter(m => memberCountry(m) === activeCountry);
+  if (q) list = list.filter(m =>
+    m.name.toLowerCase().includes(q) ||
+    m.role.toLowerCase().includes(q) ||
+    m.city.toLowerCase().includes(q)
+  );
+
+  // Sort
+  list = [...list]; // don't mutate original array
+  if (activeSort === 'name-az') {
+    list.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (activeSort === 'city-az') {
+    list.sort((a, b) => a.city.localeCompare(b.city));
+  } else if (activeSort === 'tenure-asc') {
+    // Newest first — highest year value = most recent join
+    list.sort((a, b) => (b.year || '').localeCompare(a.year || ''));
+  } else if (activeSort === 'tenure-desc') {
+    // Oldest first
+    list.sort((a, b) => (a.year || '').localeCompare(b.year || ''));
+  }
+
+  return list;
+}
+
+function zoomToAll() {
+  const pins = members.filter(m => m.lat && m.lng);
+  if (!pins.length) return;
+  if (pins.length === 1) {
+    map.flyTo([pins[0].lat, pins[0].lng], 5, { duration: 1.2, easeLinearity: 0.25 });
+  } else {
+    const bounds = L.latLngBounds(pins.map(m => [m.lat, m.lng]));
+    map.flyToBounds(bounds.pad(0.25), { maxZoom: 5, duration: 1.2, easeLinearity: 0.25 });
+  }
+}
+
+function renderListFiltered() {
+  renderList(getFilteredList());
+  renderMapMarkers();
+}
+
+function renderSecondaryFilters() {
+  const years     = [...new Set(members.map(m => extractYear(m.year)).filter(Boolean))].sort((a,b) => a - b);
+  const countries = [...new Set(members.map(m => memberCountry(m)).filter(Boolean))].sort();
+  const wrap      = document.getElementById('secondary-filters');
+
+  if (!years.length && !countries.length) { wrap.classList.remove('visible'); return; }
+  wrap.classList.add('visible');
+
+  const yearSel    = document.getElementById('filter-year');
+  const countrySel = document.getElementById('filter-country');
+
+  yearSel.innerHTML    = '<option value="all">All years</option>';
+  countrySel.innerHTML = '<option value="all">All countries</option>';
+
+  years.forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = String(y); opt.textContent = y;
+    if (String(y) === activeYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  });
+
+  countries.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    if (c === activeCountry) opt.selected = true;
+    countrySel.appendChild(opt);
+  });
+
+  yearSel.className    = 'secondary-filter-select' + (activeYear    !== 'all' ? ' filtered' : '');
+  countrySel.className = 'secondary-filter-select' + (activeCountry !== 'all' ? ' filtered' : '');
+}
+
+function onSecondaryFilterChange() {
+  activeYear    = document.getElementById('filter-year').value;
+  activeCountry = document.getElementById('filter-country').value;
+  renderSecondaryFilters();
+  renderListFiltered(); // renderMapMarkers() is called inside here
+}
+
+// ════════════════════════════════════════════════════════════
+// EDIT MEMBER
+// ════════════════════════════════════════════════════════════
+function editMember(i) {
+  const m = members[i];
+  if (m.role === 'Co-Founder') {
+    const pw = prompt(`Enter the admin password to edit ${m.name}'s profile:`);
+    if (pw === null) return;
+    if (pw !== CONFIG.ADMIN_PASSWORD) { alert('Incorrect password.'); return; }
+  }
+  openModal();
+  setTimeout(() => {
+    document.getElementById('f-email').value = (m.email || '').replace(`@${CONFIG.DOMAIN}`, '');
+    document.getElementById('f-name').value  = m.name  || '';
+    const [my, mm] = String(m.year || '').split('-');
+    document.getElementById('f-year').value  = my || '';
+    document.getElementById('f-month').value = mm || '';
+
+    // Set select value
+    const roleEl = document.getElementById('f-role');
+    roleEl.value = m.role || '';
+    roleEl.classList.remove('error');
+
+    // Set city
+    selectedCity = { lat: m.lat, lng: m.lng, city: m.city };
+    document.getElementById('f-city').value = m.city;
+    showCityTag(m.city);
+
+    // Social links
+    document.getElementById('f-slack').value    = m.slack    || '';
+    document.getElementById('f-linkedin').value = m.linkedin || '';
+
+    // Show banner
+    document.getElementById('returning-text').textContent =
+      `Editing ${m.name}'s pin — update anything that's changed and resubmit.`;
+    document.getElementById('returning-banner').classList.add('visible');
+    document.getElementById('modal-title').textContent = 'Edit pin 📍';
+  }, 50);
+}
+
+// ════════════════════════════════════════════════════════════
+// DELETE MEMBER
+// ════════════════════════════════════════════════════════════
+async function deleteMember(i) {
+  const m = members[i];
+  if (m.role === 'Co-Founder') {
+    const pw = prompt(`Enter the admin password to remove ${m.name}:`);
+    if (pw === null) return;
+    if (pw !== CONFIG.ADMIN_PASSWORD) { alert('Incorrect password.'); return; }
+  }
+  if (!confirm(`Remove ${m.name} from the map? This cannot be undone.`)) return;
+
+  // Tell the sheet to delete this row
+  if (CONFIG.APPS_SCRIPT_URL && m.email) {
+    try {
+      await fetch(CONFIG.APPS_SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'delete', email: m.email }),
+      });
+    } catch (e) {
+      console.warn('Delete from sheet failed:', e);
+    }
+  }
+
+  members.splice(i, 1);
+  if (activeIndex >= members.length) activeIndex = members.length - 1;
+  renderAll();
+  showToast(`${m.name.split(' ')[0]} removed from the map`);
+}
+
+// ════════════════════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════════════════════
+async function handleSubmit() {
+  const prefix   = document.getElementById('f-email').value.trim().toLowerCase();
+  const email    = prefix ? `${prefix}@${CONFIG.DOMAIN}` : '';
+  const name     = document.getElementById('f-name').value.trim();
+  const role     = document.getElementById('f-role').value.trim();
+  const yearNum  = parseInt(document.getElementById('f-year').value.trim());
+  const month    = document.getElementById('f-month').value;
+  const year     = month ? `${yearNum}-${month}` : yearNum;
+  const slack    = document.getElementById('f-slack').value.trim().toLowerCase().replace(/^@/, '');
+  const linkedin = document.getElementById('f-linkedin').value.trim();
+
+  // ── Validation ──
+  let hasError = false;
+  function showErr(errId, inputId, condition, msg) {
+    const errEl   = document.getElementById(errId);
+    const inputEl = document.getElementById(inputId);
+    // Email field error goes on the wrap div, not the input itself
+    const targetEl = inputId === 'f-email'
+      ? document.getElementById('email-wrap')
+      : inputEl;
+    if (condition) {
+      if (msg) errEl.textContent = msg;
+      errEl.style.display = 'block';
+      targetEl.classList.add('error');
+      hasError = true;
+    } else {
+      errEl.style.display = 'none';
+      targetEl.classList.remove('error');
+    }
+  }
+
+  const currentYear = new Date().getFullYear();
+  showErr('err-email', 'f-email',  !prefix,                                        'Please enter your username');
+  showErr('err-name',  'f-name',   !name);
+  showErr('err-month', 'f-month',  !month,                                         'Please select a month');
+  showErr('err-year',  'f-year',   !yearNum || yearNum < 2020 || yearNum > currentYear, 'Please enter a valid year');
+  showErr('err-role',  'f-role',   !role,                                           'Please select your team');
+  showErr('err-city',  'f-city',   !selectedCity);
+
+  if (hasError) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+
+  const member = {
+    email,
+    name,
+    role,
+    city:      selectedCity.city,
+    year,
+    lat:       selectedCity.lat,
+    lng:       selectedCity.lng,
+    photo:     '',
+    updatedAt: new Date().toISOString(),
+    slack,
+    linkedin,
+  };
+
+  // ── Save to Google Sheets if configured ──
+  if (CONFIG.APPS_SCRIPT_URL) {
+    try {
+      btn.innerHTML = '<div class="spinner"></div> Saving…';
+      await fetch(CONFIG.APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(member),
+      });
+    } catch (e) {
+      console.warn('Sheet save failed:', e);
+    }
+  } else {
+    btn.innerHTML = '<div class="spinner"></div> Dropping pin…';
+    await new Promise(r => setTimeout(r, 400)); // small UX delay for demo mode
+  }
+
+  // ── Upsert local members array ──
+  const existingIdx = members.findIndex(m => m.email?.toLowerCase() === email);
+  const isUpdate    = existingIdx > -1;
+
+  if (isUpdate) {
+    members[existingIdx] = member;
+    activeIndex = existingIdx;
+  } else {
+    members.push(member);
+    activeIndex = members.length - 1;
+  }
+
+  renderAll();
+  closeModal();
+  setTimeout(() => setActive(activeIndex), 200);
+  showToast(isUpdate
+    ? `Pin updated! Welcome back to the map, ${name.split(' ')[0]} 🗺️`
+    : `Welcome to the map, ${name.split(' ')[0]}! 🎉`
+  );
+}
+
+// ════════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3400);
+}
+
+// ════════════════════════════════════════════════════════════
+// LOAD FROM GOOGLE SHEETS (if configured)
+// Columns: name, role, city, year, lat, lng, photo, email, updatedAt
+// ════════════════════════════════════════════════════════════
+async function loadFromSheets() {
+  if (!CONFIG.SHEET_CSV_URL) return;
+  try {
+    const res  = await fetch(CONFIG.SHEET_CSV_URL);
+    const csv  = await res.text();
+    const rows = csv.trim().split('\n').slice(1); // skip header row
+    const loaded = rows.map(row => {
+      // Proper CSV parser — handles quoted fields containing commas (e.g. "Orlando, United States")
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i <= row.length; i++) {
+        const ch = row[i];
+        if (ch === '"') { inQ = !inQ; }
+        else if ((ch === ',' || ch === undefined) && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += ch; }
+      }
+      return {
+        name:      cols[0] || '',
+        role:      cols[1] || '',
+        city:      cols[2] || '',
+        year:      cols[3] || '',
+        lat:       parseFloat(cols[4]) || 0,
+        lng:       parseFloat(cols[5]) || 0,
+        photo:     cols[6] || '',
+        email:     cols[7] || '',
+        updatedAt: cols[8] || '',
+        slack:     cols[9]  || '',
+        linkedin:  cols[10] || '',
+      };
+    }).filter(m => m.name && m.lat && m.lng);
+    if (loaded.length) {
+      // Merge: sheet data wins; keep any seeds whose name isn't in the sheet
+      const sheetNames = new Set(loaded.map(m => m.name.toLowerCase()));
+      const seeds = members.filter(m => !sheetNames.has(m.name.toLowerCase()));
+      members = [...seeds, ...loaded];
+    }
+  } catch (e) {
+    console.warn('Could not load from Sheets:', e);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// MOBILE SIDEBAR
+// ════════════════════════════════════════════════════════════
+function toggleMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const open = sb.classList.toggle('mobile-open');
+  document.getElementById('handle-label').textContent = open ? 'Close' : 'Team directory';
+}
+
+// Also open sidebar when a list item is tapped on mobile
+function maybeOpenMobileSidebar() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.add('mobile-open');
+    document.getElementById('handle-label').textContent = 'Close';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// ONBOARDING TOUR
+// ════════════════════════════════════════════════════════════
+const TOUR_STEPS = [
+  {
+    title: '👋 Welcome to Where in the World!',
+    text:  'Every Clutch teammate has a pin on this map. Click any pin to see who\'s there and connect with them.',
+    anchor: null,
+  },
+  {
+    title: '🔍 Search & browse',
+    text:  'Use the search bar to find anyone by name, role, or city. The list below updates in real time.',
+    anchor: 'search-input',
+    side:   'right',
+  },
+  {
+    title: '🏷️ Filter by team',
+    text:  'Team pills let you zoom the map to just one group and see how many people are in each team.',
+    anchor: 'filter-pills-wrap',
+    side:   'right',
+  },
+  {
+    title: '📍 Add yourself!',
+    text:  'Not on the map yet? Hit this button to drop your pin and join the team.',
+    anchor: 'add-btn',
+    side:   'top',
+  },
+];
+
+let tourStep = 0;
+
+function initTour() {
+  if (localStorage.getItem('clutch_tour_done')) return;
+  setTimeout(() => {
+    tourStep = 0;
+    renderTourStep();
+    document.getElementById('tour-overlay').classList.add('active');
+  }, 900);
+}
+
+function renderTourStep() {
+  const step  = TOUR_STEPS[tourStep];
+  const total = TOUR_STEPS.length;
+
+  document.getElementById('tour-step-label').textContent = `Step ${tourStep + 1} of ${total}`;
+  document.getElementById('tour-title').textContent      = step.title;
+  document.getElementById('tour-text').textContent       = step.text;
+  document.getElementById('tour-btn-next').textContent   = tourStep === total - 1 ? 'Get started ✦' : 'Next →';
+
+  // Dots
+  const dotsEl = document.getElementById('tour-dots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'tour-dot' + (i === tourStep ? ' active' : '');
+    dotsEl.appendChild(dot);
+  }
+
+  positionTourCard(step);
+}
+
+function positionTourCard(step) {
+  const card = document.getElementById('tour-card');
+
+  // Reset
+  card.style.top = card.style.left = card.style.bottom = card.style.right = card.style.transform = '';
+
+  if (!step.anchor) {
+    // Centre of screen
+    card.style.top       = '50%';
+    card.style.left      = '50%';
+    card.style.transform = 'translate(-50%, -50%)';
+    return;
+  }
+
+  const target = document.getElementById(step.anchor);
+  if (!target) {
+    card.style.top = '50%'; card.style.left = '50%';
+    card.style.transform = 'translate(-50%, -50%)';
+    return;
+  }
+
+  const rect = target.getBoundingClientRect();
+
+  if (step.side === 'right') {
+    card.style.top  = Math.max(16, rect.top) + 'px';
+    card.style.left = (rect.right + 16) + 'px';
+  } else if (step.side === 'top') {
+    const bottom = window.innerHeight - rect.top + 12;
+    card.style.bottom = Math.max(16, bottom) + 'px';
+    card.style.left   = Math.max(16, rect.left) + 'px';
+  } else {
+    card.style.top = '50%'; card.style.left = '50%';
+    card.style.transform = 'translate(-50%, -50%)';
+  }
+
+  // Clamp so card doesn't overflow viewport
+  requestAnimationFrame(() => {
+    const cr = card.getBoundingClientRect();
+    if (cr.right > window.innerWidth - 16)  card.style.left = (window.innerWidth - cr.width - 16) + 'px';
+    if (cr.bottom > window.innerHeight - 16) card.style.top  = (window.innerHeight - cr.height - 16) + 'px';
+  });
+}
+
+function advanceTour() {
+  tourStep++;
+  if (tourStep >= TOUR_STEPS.length) {
+    skipTour();
+  } else {
+    renderTourStep();
+  }
+}
+
+function skipTour() {
+  document.getElementById('tour-overlay').classList.remove('active');
+  localStorage.setItem('clutch_tour_done', '1');
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+(async () => {
+  // Cap year input to current year
+  document.getElementById('f-year').max = new Date().getFullYear();
+  await loadFromSheets();
+  renderAll();
+  initTour();
+})();
+</script>
+</body>
+</html>
