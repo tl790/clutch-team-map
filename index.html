@@ -1433,12 +1433,14 @@ const markerCluster = L.markerClusterGroup({
   showCoverageOnHover: false,
   iconCreateFunction(cluster) {
     const count = cluster.getChildCount();
-    const size  = count < 10 ? 44 : count < 50 ? 50 : 56;
+    // Scale bubble size with count — noticeable even for small groups
+    const size    = Math.min(Math.round(34 + count * 3.5), 70);
+    const fontSize = size < 44 ? 12 : size < 54 ? 13 : 14;
     return L.divIcon({
       html: `<div style="width:${size}px;height:${size}px;border-radius:50%;
         background:#7C50C8;border:3px solid white;
         box-shadow:0 3px 12px rgba(80,40,160,0.35);
-        color:white;font-weight:700;font-size:13px;
+        color:white;font-weight:700;font-size:${fontSize}px;
         font-family:'Inter',sans-serif;
         display:flex;align-items:center;justify-content:center;">${count}</div>`,
       className: '',
@@ -1563,9 +1565,10 @@ function renderList(list) {
   else el.classList.remove('select-mode');
 
   // Update count label
-  const total = activeFilter === 'all' ? members.length : members.filter(m => m.role === activeFilter).length;
   document.getElementById('list-count-label').textContent =
-    activeFilter === 'all' ? `Team · ${members.length}` : `${activeFilter} · ${total}`;
+    activeFilter.size === 0
+      ? `Team · ${members.length}`
+      : `${[...activeFilter].join(', ')} · ${list.length}`;
 
   if (!list.length) {
     el.innerHTML = '<div class="empty-state">No teammates found</div>';
@@ -2004,7 +2007,8 @@ async function deleteSelected() {
 // ════════════════════════════════════════════════════════════
 // FILTER PILLS
 // ════════════════════════════════════════════════════════════
-let activeFilter = 'all';
+// activeFilter is now a Set of selected roles; empty Set = show all
+let activeFilter = new Set();
 
 function renderFilterPills() {
   const roles = [...new Set(members.map(m => m.role).filter(Boolean))].sort();
@@ -2015,20 +2019,25 @@ function renderFilterPills() {
   wrap.style.display = 'block';
   pills.innerHTML = '';
 
-  // "All" pill
+  // "All" pill — active when nothing is selected
   const allPill = document.createElement('button');
-  allPill.className = 'filter-pill' + (activeFilter === 'all' ? ' active' : '');
+  allPill.className = 'filter-pill' + (activeFilter.size === 0 ? ' active' : '');
   allPill.textContent = `All · ${members.length}`;
-  allPill.onclick = () => { activeFilter = 'all'; renderFilterPills(); renderListFiltered(); };
+  allPill.onclick = () => { activeFilter.clear(); renderFilterPills(); renderListFiltered(); };
   pills.appendChild(allPill);
 
-  // One pill per team with count
+  // One pill per team — toggle on/off, multiple can be active
   roles.forEach(role => {
     const count = members.filter(m => m.role === role).length;
     const pill  = document.createElement('button');
-    pill.className = 'filter-pill' + (activeFilter === role ? ' active' : '');
+    pill.className = 'filter-pill' + (activeFilter.has(role) ? ' active' : '');
     pill.textContent = `${role} · ${count}`;
-    pill.onclick = () => { activeFilter = role; renderFilterPills(); renderListFiltered(); };
+    pill.onclick = () => {
+      if (activeFilter.has(role)) activeFilter.delete(role);
+      else activeFilter.add(role);
+      renderFilterPills();
+      renderListFiltered();
+    };
     pills.appendChild(pill);
   });
 }
@@ -2065,7 +2074,7 @@ function onSortChange() {
 
 function getFilteredList() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
-  let list = activeFilter === 'all' ? members : members.filter(m => m.role === activeFilter);
+  let list = activeFilter.size === 0 ? members : members.filter(m => activeFilter.has(m.role));
   if (activeYear    !== 'all') list = list.filter(m => String(extractYear(m.year)) === activeYear);
   if (activeCountry !== 'all') list = list.filter(m => memberCountry(m) === activeCountry);
   if (q) list = list.filter(m =>
