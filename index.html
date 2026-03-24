@@ -1618,6 +1618,38 @@ function makePopupContent(member) {
 }
 
 // ════════════════════════════════════════════════════════════
+// COORDINATE JITTER — spread same-city pins in a tiny circle
+// so they naturally separate when the user zooms in, instead
+// of forever stacking on top of each other.
+// ════════════════════════════════════════════════════════════
+function applyCoordinateJitter(list) {
+  // Clear any previous jitter
+  list.forEach(m => { delete m._jLat; delete m._jLng; });
+
+  // Group members by their exact coordinates (rounded to ~11m precision)
+  const groups = {};
+  list.forEach((m, i) => {
+    if (!m.lat || !m.lng) return;
+    const key = `${m.lat.toFixed(4)},${m.lng.toFixed(4)}`;
+    (groups[key] = groups[key] || []).push(i);
+  });
+
+  // For any group with 2+ members, offset them in a circle
+  Object.values(groups).forEach(indices => {
+    if (indices.length < 2) return;
+    const n = indices.length;
+    // Radius in degrees — ~180m base, grows slightly for larger groups
+    const R = 0.0016 + 0.0002 * Math.sqrt(Math.max(0, n - 4));
+    indices.forEach((memberIdx, pos) => {
+      // Distribute evenly around the circle, starting at top (-90°)
+      const angle = (2 * Math.PI * pos) / n - Math.PI / 2;
+      list[memberIdx]._jLat = list[memberIdx].lat + R * Math.cos(angle);
+      list[memberIdx]._jLng = list[memberIdx].lng + R * Math.sin(angle);
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════════
 // RENDER
 // ════════════════════════════════════════════════════════════
 function renderAll() {
@@ -1625,8 +1657,14 @@ function renderAll() {
   markerCluster.clearLayers();
   leafletMarkers = [];
 
+  // Spread same-city members in a small circle so they separate naturally on zoom
+  applyCoordinateJitter(members);
+
   members.forEach((member, i) => {
-    const marker = L.marker([member.lat, member.lng], { icon: makeMarkerIcon(member) });
+    if (!member.lat || !member.lng) { leafletMarkers.push(null); return; }
+    const lat = member._jLat ?? member.lat;
+    const lng = member._jLng ?? member.lng;
+    const marker = L.marker([lat, lng], { icon: makeMarkerIcon(member) });
     marker.bindPopup(makePopupContent(member), { maxWidth: 300 });
     marker.on('click', () => setActive(i));
     leafletMarkers.push(marker);
@@ -1643,13 +1681,13 @@ function renderMapMarkers() {
   markerCluster.clearLayers();
   const filteredSet = new Set(getFilteredList().map(m => members.indexOf(m)));
   leafletMarkers.forEach((marker, i) => {
-    if (filteredSet.has(i)) markerCluster.addLayer(marker);
+    if (marker && filteredSet.has(i)) markerCluster.addLayer(marker);
   });
 
   // Fit map to the visible pins
   const visible = [...filteredSet].map(i => leafletMarkers[i]).filter(Boolean);
   if (visible.length === 1) {
-    map.flyTo(leafletMarkers[[...filteredSet][0]].getLatLng(), 7, { duration: 1.2, easeLinearity: 0.25 });
+    map.flyTo(visible[0].getLatLng(), 7, { duration: 1.2, easeLinearity: 0.25 });
   } else if (visible.length > 1) {
     const group = L.featureGroup(visible);
     map.fitBounds(group.getBounds().pad(0.25), { maxZoom: 7 });
