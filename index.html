@@ -2513,7 +2513,8 @@ function showToast(msg) {
 
 // ════════════════════════════════════════════════════════════
 // LOAD FROM GOOGLE SHEETS (if configured)
-// Columns: name, role, city, year, lat, lng, photo, email, updatedAt
+// Columns: A name | B role | C city | D year | E lat | F lng |
+//          G photo | H email | I updatedAt | J slack | K linkedin | L archived
 // ════════════════════════════════════════════════════════════
 async function loadFromSheets() {
   if (!CONFIG.SHEET_CSV_URL) return;
@@ -2543,8 +2544,9 @@ async function loadFromSheets() {
         updatedAt: cols[8] || '',
         slack:     cols[9]  || '',
         linkedin:  cols[10] || '',
+        archived:  (cols[11] || '').toLowerCase() === 'true',
       };
-    }).filter(m => m.name && m.lat && m.lng);
+    }).filter(m => m.name && m.lat && m.lng && !m.archived);
     if (loaded.length) {
       // Merge: sheet data wins; keep any seeds whose name isn't in the sheet
       const sheetNames = new Set(loaded.map(m => m.name.toLowerCase()));
