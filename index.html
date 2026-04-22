@@ -38,6 +38,7 @@
     .sidebar-header {
       padding: 22px 20px 18px;
       border-bottom: 1px solid #f0eef8;
+      position: relative;
     }
 
     .logo {
@@ -89,6 +90,7 @@
       padding: 14px 12px;
       border-bottom: 1px solid #f0eef8;
       gap: 4px;
+      align-items: center;
     }
 
     .stat { flex: 1; text-align: center; padding: 6px 4px; }
@@ -106,6 +108,154 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-top: 3px;
+    }
+
+    /* ── Team composition donut ── */
+    .stat-people-wrap {
+      flex: 1.15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 4px 2px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .stat-people-wrap:hover { background: #f7f4fc; }
+    body.dark .stat-people-wrap:hover { background: #1a1438; }
+    .stat-donut {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .stat-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .stat-donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #7C50C8;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    body.dark .stat-donut-center { color: #c4a8ff; }
+    .stat-people-text { text-align: left; }
+
+    /* Donut legend popover */
+    .donut-popover {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 12px;
+      width: 248px;
+      background: white;
+      border: 1px solid #ece9f5;
+      border-radius: 12px;
+      box-shadow: 0 18px 40px rgba(60,40,110,0.18), 0 2px 6px rgba(60,40,110,0.06);
+      padding: 12px 12px 10px;
+      z-index: 80;
+      font-family: 'Inter', sans-serif;
+      display: none;
+      animation: donutPopIn 0.18s cubic-bezier(.2,.9,.3,1);
+    }
+    .donut-popover.visible { display: block; }
+    @keyframes donutPopIn {
+      from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .donut-popover-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #7b6f9e;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 8px;
+    }
+    .donut-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 12.5px;
+      color: #2a2238;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 4px 6px;
+      margin: 0 -6px;
+    }
+    .donut-legend-row:hover { background: #f7f4fc; }
+    .donut-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .donut-legend-name { flex: 1; font-weight: 500; }
+    .donut-legend-count {
+      color: #7b6f9e;
+      font-variant-numeric: tabular-nums;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    body.dark .donut-popover {
+      background: #15102a;
+      border-color: #2d2450;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+    }
+    body.dark .donut-popover-title { color: #9b8fbd; }
+    body.dark .donut-legend-row { color: #e8e3f5; }
+    body.dark .donut-legend-row:hover { background: #1a1438; }
+    body.dark .donut-legend-count { color: #9b8fbd; }
+
+    /* ── Team-growth sparkline ── */
+    .growth-sparkline {
+      padding: 10px 14px 12px;
+      border-bottom: 1px solid #f0eef8;
+      cursor: default;
+    }
+    .growth-sparkline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .growth-sparkline-title {
+      font-size: 10.5px;
+      color: #b0a8c4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 600;
+    }
+    .growth-sparkline-range {
+      font-size: 10px;
+      color: #c0bad4;
+      font-weight: 500;
+    }
+    .growth-sparkline-svg {
+      width: 100%;
+      height: 34px;
+      display: block;
+    }
+    .growth-sparkline-svg .growth-area { fill: url(#growthGrad); }
+    .growth-sparkline-svg .growth-line { fill: none; stroke: #7C50C8; stroke-width: 1.5; stroke-linejoin: round; }
+    .growth-sparkline-svg .growth-dot  { fill: #7C50C8; }
+    .growth-sparkline-svg .growth-hover-dot { fill: #7C50C8; stroke: #fff; stroke-width: 2; pointer-events: none; opacity: 0; transition: opacity 0.1s; }
+    .growth-sparkline-svg .growth-hover-line { stroke: #7C50C8; stroke-width: 1; stroke-dasharray: 2 2; opacity: 0; pointer-events: none; }
+    .growth-sparkline:hover .growth-hover-dot,
+    .growth-sparkline:hover .growth-hover-line { opacity: 0.6; }
+    .growth-sparkline-tooltip {
+      font-size: 11px;
+      color: #6b5e8f;
+      margin-top: 4px;
+      min-height: 14px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
     }
 
     .stat-divider { width: 1px; background: #f0eef8; margin: 6px 0; }
@@ -132,6 +282,28 @@
     .search-input:focus { border-color: #7C50C8; background-color: #fff; }
     .search-input::placeholder { color: #c0bad4; }
 
+    .search-wrap { position: relative; }
+    .search-kbd {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a69bc0;
+      background: #f2eff8;
+      border: 1px solid #e6e0f0;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+    .search-input:focus ~ .search-kbd,
+    .search-input:not(:placeholder-shown) ~ .search-kbd { opacity: 0; }
+    @media (max-width: 768px) { .search-kbd { display: none; } }
+
     /* ── Member List ── */
     #member-list {
       flex: 1;
@@ -155,6 +327,32 @@
 
     .member-item:hover { background: #faf8ff; }
     .member-item.active { background: #f3eeff; border-left-color: #7C50C8; }
+    .member-item.kb-focus { background: #f3eeff; outline: 2px solid #7C50C8; outline-offset: -2px; }
+
+    /* Tenure ring around list avatar — lighter for new, bold gold for veterans */
+    .avatar-ring {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      padding: 2px;
+      box-sizing: border-box;
+      background: var(--tenure-ring, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-ring.no-ring { padding: 0; width: 40px; height: 40px; }
+
+    /* Flag chip next to location */
+    .location-flag {
+      display: inline-block;
+      margin-right: 4px;
+      font-size: 13px;
+      line-height: 1;
+      vertical-align: -1px;
+    }
 
     .avatar {
       width: 40px;
@@ -162,15 +360,48 @@
       border-radius: 50%;
       flex-shrink: 0;
       overflow: hidden;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 14px;
       color: white;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+      line-height: 1;
     }
-
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    /* Abs-positioned span for true optical centering — flex centering with
+       Inter 14px bold lands slightly high-right at this size. */
+    .avatar-ini-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, calc(-50% + 0.5px));
+      line-height: 1;
+      display: inline-block;
+    }
+    /* Country flag badge shown alongside initials (not over real photos) —
+       rides the bottom-right edge of the avatar-ring. */
+    .avatar-flag {
+      position: absolute;
+      right: -2px;
+      bottom: -2px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+    body.dark .avatar-flag { background: #241c40; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
     .member-info { flex: 1; min-width: 0; }
 
@@ -320,6 +551,251 @@
     }
     #cluster-view-clear:hover { background: #ede0ff; color: #7C50C8; border-color: #a87de0; }
 
+    /* ══════════════════════════════════════════════════════
+       CITY SPOTLIGHT — pops up when a user clicks a cluster.
+       Floating card, top-center of the map, above the stats.
+       ══════════════════════════════════════════════════════ */
+    #city-spotlight {
+      position: absolute;
+      /* Centered horizontally over the MAP area (not the viewport) — the
+         sidebar takes the left 320px on desktop, so viewport-centered would
+         sit too far left. Anchored near the bottom so it doesn't cover the
+         cluster bubbles users need to click. */
+      bottom: 24px;
+      left: calc(320px + (100vw - 320px) / 2);
+      transform: translateX(-50%) translateY(12px);
+      width: min(380px, calc(100vw - 360px));
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 18px 48px rgba(60, 30, 120, 0.22), 0 2px 6px rgba(60, 30, 120, 0.08);
+      border: 1px solid rgba(236, 233, 245, 0.9);
+      z-index: 680;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+    #city-spotlight.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    /* Cross-fade when switching from one city to another without closing. */
+    #city-spotlight.switching {
+      animation: cs-city-switch 180ms ease;
+    }
+    @keyframes cs-city-switch {
+      0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+      45%  { opacity: 0.35; transform: translateX(-50%) translateY(-4px) scale(0.985); }
+      100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+    .cs-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      gap: 10px;
+    }
+    .cs-headline {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .cs-label { font-size: 10.5px; font-weight: 600; color: #9e80d4; text-transform: uppercase; letter-spacing: 0.8px; }
+    .cs-city {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1230;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.15;
+    }
+    .cs-flag { font-size: 22px; }
+    .cs-country { font-size: 13px; color: #7b6f9e; font-weight: 500; margin-top: 1px; }
+    .cs-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      color: #b0a8c4;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .cs-close:hover { background: #f3eeff; color: #7C50C8; }
+
+    .cs-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      padding: 0 16px 12px;
+    }
+    .cs-stat {
+      text-align: center;
+      padding: 8px 4px;
+      background: #faf8ff;
+      border-radius: 10px;
+    }
+    .cs-stat + .cs-stat { margin-left: 6px; }
+    .cs-stat-val { font-size: 18px; font-weight: 700; color: #5B21B6; font-variant-numeric: tabular-nums; line-height: 1; }
+    .cs-stat-lab { font-size: 10px; color: #9b8fbd; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; font-weight: 600; }
+
+    .cs-avatars {
+      padding: 0 16px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cs-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #e8e2f5;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(60, 30, 120, 0.1);
+      position: relative;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+      /* Note: no overflow:hidden at this level — we need the flag badge
+         and tooltip to be allowed to peek outside. The round clip is
+         applied to the inner .cs-avatar img / .cs-avatar-ini instead. */
+    }
+    .cs-avatar:hover { transform: scale(1.12); z-index: 2; }
+    .cs-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
+    }
+    .cs-avatar-ini {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    /* True-center the initials with an absolutely-positioned span. Flex/grid
+       centering leaves Inter's 13px bold slightly high-right because of the
+       font's optical metrics; absolute positioning with translate gives us
+       pixel-perfect placement regardless of line-height quirks. */
+    .cs-avatar-ini-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 1;
+      display: inline-block;
+      /* Tiny cap-height correction — Inter sits the cap line slightly high. */
+      margin-top: 0.5px;
+    }
+    /* Country flag badge — only rendered alongside the initials fallback
+       (no flag over real photos — faces already communicate identity). */
+    .cs-avatar-flag {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      line-height: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+      pointer-events: none;
+      z-index: 2;
+      /* Emoji flags have a lot of whitespace padding; scale to use the full badge. */
+      overflow: hidden;
+    }
+    .cs-avatar-tip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1230;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.12s;
+      z-index: 3;
+    }
+    .cs-avatar:hover .cs-avatar-tip { opacity: 1; }
+    .cs-avatar-more {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #f3eeff;
+      display: flex; align-items: center; justify-content: center;
+      color: #7C50C8;
+      font-weight: 600;
+      font-size: 12px;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(60, 30, 120, 0.1);
+    }
+
+    .cs-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px 14px;
+      border-top: 1px solid #f0eef8;
+      gap: 10px;
+    }
+    .cs-localtime {
+      font-size: 11.5px;
+      color: #7b6f9e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cs-localtime strong { color: #1a1230; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .cs-zoom-btn {
+      background: #7C50C8;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .cs-zoom-btn:hover { background: #6B3DB8; }
+
+    body.dark #city-spotlight { background: #15102a; border-color: #2d2450; box-shadow: 0 20px 48px rgba(0,0,0,0.6); }
+    body.dark .cs-city { color: #f3efff; }
+    body.dark .cs-label { color: #c4a8ff; }
+    body.dark .cs-country { color: #9b8fbd; }
+    body.dark .cs-close { color: #9b8fbd; }
+    body.dark .cs-close:hover { background: #2a1f50; color: #c4a8ff; }
+    body.dark .cs-stat { background: #1a1438; }
+    body.dark .cs-stat-val { color: #c4a8ff; }
+    body.dark .cs-stat-lab { color: #9b8fbd; }
+    body.dark .cs-avatar { border-color: #1a1438; }
+    body.dark .cs-avatar-more { background: #241c40; color: #c4a8ff; border-color: #1a1438; }
+    body.dark .cs-foot { border-top-color: #2d2450; }
+    body.dark .cs-localtime { color: #9b8fbd; }
+    body.dark .cs-localtime strong { color: #f3efff; }
+
+    @media (max-width: 640px) {
+      #city-spotlight { top: auto; bottom: 80px; left: 10px; right: 10px; width: auto; transform: translateY(8px); }
+      #city-spotlight.visible { transform: translateY(0); }
+      #city-spotlight.switching { animation: none; }
+    }
+
     /* ── Secondary filters (year + country) ── */
     #secondary-filters {
       display: none;
@@ -386,6 +862,53 @@
       color: #c0bad4;
       font-size: 13px;
     }
+    .empty-state.rich {
+      padding: 44px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .empty-state.rich .empty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #f3eeff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7C50C8;
+    }
+    .empty-state.rich .empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1230;
+    }
+    .empty-state.rich .empty-sub {
+      color: #8878a8;
+      font-size: 12.5px;
+      line-height: 1.5;
+      max-width: 240px;
+    }
+    .empty-state.rich button {
+      background: #7C50C8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .empty-state.rich button:hover { background: #6B3DB8; }
+    body.dark .empty-state.rich .empty-icon { background: #241c40; color: #c4a8ff; }
+    body.dark .empty-state.rich .empty-title { color: #f3efff; }
+    body.dark .empty-state.rich .empty-sub { color: #9b8fbe; }
 
     /* ── Add Button ── */
     .add-btn-wrap {
@@ -416,7 +939,8 @@
     #add-btn:active { transform: scale(0.98); }
 
     /* ── Map ── */
-    #map { flex: 1; height: 100vh; }
+    #map { flex: 1; height: 100vh; background: #eef0f4; }
+    .leaflet-container { background: #eef0f4 !important; }
 
     /* ── Leaflet overrides ── */
     .leaflet-popup-content-wrapper {
@@ -429,6 +953,163 @@
     .leaflet-popup-content { margin: 0; }
     .leaflet-popup-tip { background: white; }
     .leaflet-control-zoom a { color: #1a1230 !important; font-family: 'Inter', sans-serif !important; }
+
+    /* Bigger, more tappable popup close button */
+    .leaflet-popup-close-button {
+      width: 26px !important;
+      height: 26px !important;
+      top: 6px !important;
+      right: 6px !important;
+      padding: 0 !important;
+      font: 700 18px/24px 'Inter', sans-serif !important;
+      color: #7b6f9e !important;
+      background: rgba(243, 238, 255, 0.85) !important;
+      border-radius: 50% !important;
+      text-align: center !important;
+      border: 1px solid #ede9f8 !important;
+      transition: all 0.12s ease !important;
+    }
+    .leaflet-popup-close-button:hover {
+      background: #7C50C8 !important;
+      color: white !important;
+      border-color: #7C50C8 !important;
+    }
+    body.dark .leaflet-popup-close-button {
+      background: rgba(36, 28, 64, 0.85) !important;
+      color: #c4a8ff !important;
+      border-color: #342855 !important;
+    }
+    body.dark .leaflet-popup-close-button:hover {
+      background: #c4a8ff !important;
+      color: #15102a !important;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       CUSTOM AVATAR PINS
+       ══════════════════════════════════════════════════════ */
+    .clutch-pin { background: transparent; border: 0; }
+    .pin-wrap {
+      position: relative;
+      width: 42px;
+      height: 50px;
+      cursor: pointer;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: 50% 100%;
+    }
+    .pin-wrap:hover { transform: scale(1.15); z-index: 2; }
+    .pin-avatar {
+      position: absolute;
+      top: 0; left: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      padding: 2.5px;
+      box-shadow: 0 2px 8px rgba(26, 18, 48, 0.28);
+      box-sizing: border-box;
+      border: 2.5px solid var(--ring);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pin-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+    .pin-initials {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Anchor tail: a small triangle pointing down to the geo point */
+    .pin-tail {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      transform: translateX(-50%) rotate(45deg);
+      background: var(--ring);
+      border-radius: 2px;
+      box-shadow: 2px 2px 4px rgba(26,18,48,0.22);
+      z-index: -1;
+    }
+    .pin-wrap.is-active .pin-avatar {
+      border-width: 3.5px;
+      box-shadow: 0 0 0 3px rgba(124, 80, 200, 0.25), 0 4px 14px rgba(26, 18, 48, 0.35);
+    }
+    /* Hover/active pulse ring — used when list row is hovered */
+    .pin-wrap.pulse::before {
+      content: '';
+      position: absolute;
+      top: -4px; left: -4px;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--ring);
+      animation: pin-pulse 1.4s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes pin-pulse {
+      0%   { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       CLUSTER BUBBLES — purple-themed, tiered
+       ══════════════════════════════════════════════════════ */
+    .clutch-cluster {
+      background: transparent !important;
+      border: 0 !important;
+    }
+    .cc-bubble {
+      position: relative;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #A673E0 0%, #7C50C8 55%, #5B38A8 100%);
+      color: white;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid white;
+      box-shadow: 0 4px 14px rgba(80, 40, 160, 0.35), inset 0 -3px 8px rgba(0,0,0,0.12);
+      transition: transform 0.2s;
+    }
+    .cc-bubble:hover { transform: scale(1.08); }
+    .cc-bubble.dense::after {
+      /* Soft density glow for clusters with 5+ members */
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,80,200,0.28) 0%, rgba(124,80,200,0) 70%);
+      z-index: -1;
+      pointer-events: none;
+      animation: cc-breathe 3.4s ease-in-out infinite;
+    }
+    .cc-bubble.very-dense::after {
+      inset: -18px;
+      background: radial-gradient(circle, rgba(124,80,200,0.38) 0%, rgba(124,80,200,0) 68%);
+    }
+    @keyframes cc-breathe {
+      0%, 100% { transform: scale(0.95); opacity: 0.85; }
+      50%      { transform: scale(1.08); opacity: 1; }
+    }
+    body.dark .cc-bubble {
+      border-color: #15102a;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5), inset 0 -3px 8px rgba(0,0,0,0.25);
+    }
 
     /* ── Modal ── */
     #modal-overlay {
@@ -974,18 +1655,44 @@
         right: 0;
         width: 100% !important;
         min-width: unset !important;
-        height: 72vh;
+        height: 90vh;
         border-radius: 20px 20px 0 0;
-        transform: translateY(calc(100% - 68px));
-        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        /* Default state: PEEK — only handle + stats visible */
+        transform: translateY(calc(100% - 120px));
+        transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
         z-index: 1001;
         box-shadow: 0 -4px 32px rgba(80, 40, 160, 0.18);
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        touch-action: pan-y;
       }
 
+      /* HALF state — list visible (shows ~half the screen) */
+      #sidebar.mobile-half { transform: translateY(55%); }
+      /* FULL state — entire drawer visible */
+      #sidebar.mobile-full { transform: translateY(0); }
+      /* Legacy class — treated as full for compatibility */
       #sidebar.mobile-open { transform: translateY(0); }
+
+      /* In PEEK, hide everything except the handle + stats */
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) .sidebar-header,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) .search-wrap,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #filter-pills-wrap,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #secondary-filters,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #sort-bar,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) .list-header,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #member-list,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #bulk-bar,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) #anniv-banner,
+      #sidebar:not(.mobile-half):not(.mobile-full):not(.mobile-open) .add-btn-wrap {
+        display: none !important;
+      }
+
+      /* In PEEK, expose a compact stats strip */
+      #mobile-peek-stats {
+        display: flex !important;
+      }
 
       #map { width: 100%; height: 100vh; }
 
@@ -996,6 +1703,41 @@
       .add-btn-wrap {
         padding-bottom: max(16px, env(safe-area-inset-bottom));
       }
+
+      /* Slight indicator that drawer has snap points */
+      .sidebar-handle-bar { transition: width 0.2s, background 0.2s; }
+      #sidebar.mobile-full .sidebar-handle-bar { width: 48px; background: #7C50C8; }
+    }
+
+    /* Peek-state stats strip (mobile only, hidden on desktop) */
+    #mobile-peek-stats {
+      display: none;
+      padding: 4px 20px 14px;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      border-bottom: none;
+    }
+    #mobile-peek-stats .mps-item { display: flex; flex-direction: column; align-items: center; }
+    #mobile-peek-stats .mps-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: #7C50C8;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    #mobile-peek-stats .mps-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #b0a8c4;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+    }
+    #mobile-peek-stats .mps-div {
+      width: 1px;
+      height: 22px;
+      background: #f0eef8;
     }
 
     /* ── Onboarding tour overlay ── */
@@ -1100,17 +1842,644 @@
     /* ── Cluster override – hide leaflet default cluster styles ── */
     .marker-cluster { background: none !important; box-shadow: none !important; }
     .marker-cluster div { background: none !important; }
+
+    /* ── Pin hover tooltip (Leaflet bindTooltip override) ── */
+    .leaflet-tooltip.pin-tooltip {
+      background: #1a1230;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 4px 14px rgba(26,18,48,0.25);
+      white-space: nowrap;
+      max-width: 260px;
+    }
+    .leaflet-tooltip.pin-tooltip::before { display: none; }
+    .leaflet-tooltip.pin-tooltip .tt-name { font-weight: 700; letter-spacing: 0.1px; }
+    .leaflet-tooltip.pin-tooltip .tt-role { font-size: 11px; color: #c9b8ef; margin-top: 2px; }
+
+    /* ── Floating stats bar (map overlay) ── */
+    #stats-float {
+      position: absolute;
+      top: 16px;
+      /* Center within the map column (viewport minus the 320px sidebar on its left) */
+      left: calc(320px + (100vw - 320px) / 2);
+      transform: translateX(-50%);
+      z-index: 1001;
+      display: flex;
+      background: white;
+      border-radius: 14px;
+      padding: 4px;
+      box-shadow: 0 8px 28px rgba(26, 18, 48, 0.14), 0 2px 6px rgba(26, 18, 48, 0.06);
+      border: 1px solid rgba(236, 233, 245, 0.9);
+      gap: 2px;
+      pointer-events: auto;
+    }
+
+    .stat-float {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 18px;
+      border-radius: 11px;
+      position: relative;
+      min-width: 78px;
+      transition: background 0.15s;
+    }
+
+    .stat-float + .stat-float::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 16px;
+      bottom: 16px;
+      width: 1px;
+      background: #f0eef8;
+    }
+
+    .stat-float-num {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1230;
+      line-height: 1;
+      letter-spacing: -0.6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-float-num.accent { color: #7C50C8; }
+
+    .stat-float-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #9b93b0;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-top: 6px;
+    }
+
+    /* Hide the sidebar stat row by default when the floating bar is present;
+       keep it inside the mobile sidebar */
+    .desktop-stats-hidden { display: none !important; }
+
+    /* ── Anniversary banner (sidebar) ── */
+    #anniv-banner {
+      display: none;
+      align-items: stretch;
+      gap: 1px;
+      margin: 10px 16px 4px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #fdf4ff 0%, #f3eeff 100%);
+      border: 1px solid #e9d8f7;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 2px 8px rgba(124, 80, 200, 0.08);
+    }
+    #anniv-banner.visible { display: flex; }
+    #anniv-banner.dismissed { display: none; }
+
+    .anniv-chip {
+      flex: 1;
+      padding: 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      text-align: left;
+      font-family: inherit;
+      transition: background 0.15s;
+      min-width: 0;
+    }
+    .anniv-chip:hover { background: rgba(255,255,255,0.55); }
+    .anniv-chip:not(:first-child) { border-left: 1px solid rgba(124, 80, 200, 0.15); }
+    .anniv-chip-top {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .anniv-chip-count {
+      font-size: 15px;
+      font-weight: 700;
+      color: #5B21B6;
+      letter-spacing: -0.2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .anniv-chip-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #7a6e8e;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .anniv-dismiss {
+      align-self: stretch;
+      padding: 0 10px;
+      border: none;
+      background: transparent;
+      color: #b0a8c4;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      border-left: 1px solid rgba(124, 80, 200, 0.15);
+      transition: color 0.15s, background 0.15s;
+    }
+    .anniv-dismiss:hover { color: #5B21B6; background: rgba(255,255,255,0.55); }
+
+    /* Active filter state when anniversary chip was clicked */
+    .anniv-chip.active {
+      background: linear-gradient(135deg, #ede9fe 0%, #e0d4fa 100%);
+    }
+    .anniv-chip.active .anniv-chip-label { color: #5B21B6; }
+
+    /* ── Active filters bar (clear-all) ── */
+    #active-filters-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 8px 16px 0;
+      padding: 8px 10px 8px 12px;
+      background: #1a1230;
+      color: white;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      box-shadow: 0 4px 14px rgba(26,18,48,0.18);
+    }
+    #active-filters-bar.visible { display: flex; }
+    #active-filters-bar .afb-label {
+      flex: 1;
+      min-width: 0;
+      font-weight: 500;
+      color: #e9dfff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #active-filters-bar .afb-count {
+      font-weight: 700;
+      color: white;
+      margin-right: 4px;
+    }
+    #active-filters-bar button {
+      background: #7C50C8;
+      border: none;
+      color: white;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s;
+    }
+    #active-filters-bar button:hover { background: #6B3DB8; }
+    /* Secondary-styled Share button inside the active-filters bar */
+    #active-filters-bar .afb-share {
+      background: transparent;
+      color: #5B21B6;
+      border: 1.5px solid #d8c8f0;
+    }
+    #active-filters-bar .afb-share:hover { background: rgba(255,255,255,0.5); color: #4a1a99; border-color: #c4a8ff; }
+    #active-filters-bar .afb-share.copied { background: #2bb673; border-color: #2bb673; color: white; }
+    body.dark #active-filters-bar .afb-share { color: #c4a8ff; border-color: #4a3884; background: transparent; }
+    body.dark #active-filters-bar .afb-share:hover { background: rgba(196,168,255,0.12); border-color: #c4a8ff; }
+
+    /* ── Hide floating stats + tooltips on mobile ── */
+    @media (max-width: 768px) {
+      #stats-float { display: none !important; }
+      .leaflet-tooltip.pin-tooltip { display: none !important; }
+    }
+
+    /* On narrower desktop widths, nudge stats right-of-sidebar and let it shrink */
+    @media (min-width: 769px) and (max-width: 1100px) {
+      #stats-float { padding: 2px; }
+      .stat-float { padding: 8px 12px; min-width: 64px; }
+      .stat-float-num { font-size: 22px; }
+      .stat-float-label { font-size: 9.5px; margin-top: 4px; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       DARK MODE — scoped overrides on body.dark
+       ══════════════════════════════════════════════════════ */
+    body.dark { background: #0e0820; color: #e8e3f5; }
+    body.dark #sidebar { background: #15102a; box-shadow: 2px 0 16px rgba(0,0,0,0.5); }
+    body.dark .sidebar-header { border-bottom-color: #241c40; }
+    body.dark .page-title { color: #f3efff; }
+    body.dark .page-subtitle { color: #9b8fbe; }
+    body.dark .logo-wordmark { color: #e8e3f5; }
+
+    body.dark .stats-row { border-bottom-color: #241c40; }
+    body.dark .stat-divider { background-color: #241c40; }
+    body.dark .stat-num { color: #c4a8ff; }
+    body.dark .stat-label { color: #7b6f9e; }
+    body.dark .growth-sparkline { border-bottom-color: #241c40; }
+    body.dark .growth-sparkline-title { color: #7b6f9e; }
+    body.dark .growth-sparkline-range { color: #5f547e; }
+    body.dark .growth-sparkline-tooltip { color: #b0a6cc; }
+    body.dark .growth-sparkline-svg .growth-line { stroke: #c4a8ff; }
+
+    body.dark .search-input {
+      background-color: #1a1438; color: #e8e3f5; border-color: #2d2450;
+    }
+    body.dark .search-input::placeholder { color: #6a5e8a; }
+    body.dark .search-input:focus { background-color: #1f1842; border-color: #7C50C8; }
+    body.dark .search-kbd { background: #2d2450; border-color: #3a2f60; color: #8a7eb0; }
+
+    body.dark .member-item { border-bottom-color: #241c40; }
+    body.dark .member-item:hover { background: #1a1438; }
+    body.dark .member-item.active { background: #241c40; }
+    body.dark .member-name { color: #f3efff; }
+    body.dark .member-role,
+    body.dark .member-city { color: #9b8fbe; }
+    body.dark .list-header { background: #15102a; border-bottom-color: #241c40; color: #7b6f9e; }
+
+    body.dark #sort-bar { background: #15102a; border-bottom-color: #241c40; }
+    body.dark #sort-bar label { color: #7b6f9e; }
+    body.dark #sort-select {
+      background-color: #1a1438; color: #e8e3f5; border-color: #2d2450;
+    }
+    body.dark #sort-select.sorted { background-color: #2a1f50; color: #c4a8ff; border-color: #7C50C8; }
+
+    body.dark .filter-pill {
+      background: #1a1438; color: #b0a6cc; border-color: #2d2450;
+    }
+    body.dark .filter-pill.active { background: #7C50C8; color: white; border-color: #7C50C8; }
+    body.dark .filter-pill:hover:not(.active) { background: #241c40; }
+
+    body.dark .secondary-filter-select {
+      background-color: #1a1438; color: #e8e3f5; border-color: #2d2450;
+    }
+
+    body.dark #map,
+    body.dark .leaflet-container { background: #0a0618 !important; }
+
+    body.dark .mp-card,
+    body.dark .cluster-spider-tooltip,
+    body.dark .popup-card {
+      background: #1a1438; color: #e8e3f5; border-color: #2d2450;
+    }
+
+    body.dark .anniv-chip { background: #1a1438; border-color: #2d2450; }
+    body.dark .anniv-chip-label { color: #b0a6cc; }
+    body.dark .anniv-chip.active { background: #2a1f50; border-color: #7C50C8; }
+    body.dark .anniv-chip.active .anniv-chip-label { color: #c4a8ff; }
+    body.dark .anniv-dismiss { color: #7b6f9e; }
+
+    body.dark #stats-float {
+      background: rgba(21, 16, 42, 0.92);
+      border-color: #2d2450;
+      color: #e8e3f5;
+    }
+    body.dark .stat-float-num { color: #c4a8ff; }
+    body.dark .stat-float-label { color: #7b6f9e; }
+
+    body.dark #cluster-view-banner {
+      background: #2a1f50; color: #e8e3f5;
+    }
+
+    /* Dark-mode toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 18px;
+      right: 16px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid #ece9f5;
+      background: #faf9fc;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #7C50C8;
+      transition: all 0.15s;
+      padding: 0;
+    }
+    .theme-toggle:hover { background: #f3eeff; }
+    .random-btn {
+      position: absolute;
+      top: 18px;
+      right: 52px;   /* sits next to the theme toggle */
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid #ece9f5;
+      background: #faf9fc;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #7C50C8;
+      transition: all 0.15s;
+      padding: 0;
+    }
+    .random-btn:hover { background: #f3eeff; transform: rotate(15deg); }
+    .random-btn.rolling { animation: diceSpin 0.6s cubic-bezier(.2, .9, .3, 1); }
+    @keyframes diceSpin {
+      0%   { transform: rotate(0) scale(1); }
+      40%  { transform: rotate(240deg) scale(1.15); }
+      70%  { transform: rotate(360deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    @keyframes confettiFall {
+      0%   { transform: translate(-50%, -50%) rotate(var(--rot-end, 180deg)); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 120px)) rotate(var(--rot-end, 360deg)); opacity: 0; }
+    }
+    body.dark .random-btn {
+      background: #1a1438;
+      border-color: #2d2450;
+      color: #c4a8ff;
+    }
+    body.dark .random-btn:hover { background: #241c40; }
+    body.dark .theme-toggle {
+      background: #1a1438;
+      border-color: #2d2450;
+      color: #c4a8ff;
+    }
+    body.dark .theme-toggle:hover { background: #241c40; }
+    .theme-toggle .icon-sun { display: none; }
+    body.dark .theme-toggle .icon-sun { display: block; }
+    body.dark .theme-toggle .icon-moon { display: none; }
+    /* ── Keyboard shortcuts overlay ── */
+    #shortcuts-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 18, 48, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.18s ease;
+    }
+    #shortcuts-overlay.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    .shortcuts-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 28px 20px;
+      width: 440px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 30px 60px rgba(20, 12, 50, 0.35);
+      font-family: 'Inter', sans-serif;
+      animation: scCardIn 0.22s cubic-bezier(.2,.9,.3,1);
+    }
+    @keyframes scCardIn { from { transform: translateY(10px) scale(.97); opacity: 0 } to { transform: none; opacity: 1 } }
+    .shortcuts-head {
+      display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px;
+    }
+    .shortcuts-title { font-size: 16px; font-weight: 700; color: #1a1230; }
+    .shortcuts-close {
+      background: none; border: none; font-size: 22px; line-height: 1; color: #b0a8c4; cursor: pointer; padding: 0 4px;
+    }
+    .shortcuts-close:hover { color: #7C50C8; }
+    .sc-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .sc-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 2px;
+      border-bottom: 1px dashed #f0eef8;
+    }
+    .sc-row:last-child { border-bottom: none; }
+    .sc-label { color: #3a2e58; font-size: 13.5px; }
+    .sc-keys { display: inline-flex; gap: 4px; }
+    .sc-key {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 22px; padding: 3px 7px;
+      background: #f3eeff; color: #5B21B6;
+      border: 1px solid #e0d6f5; border-bottom-width: 2px;
+      border-radius: 5px;
+      font: 600 11.5px ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+    body.dark #shortcuts-overlay { background: rgba(0,0,0,0.62); }
+    body.dark .shortcuts-card { background: #15102a; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+    body.dark .shortcuts-title { color: #f3efff; }
+    body.dark .sc-label { color: #d8d0ec; }
+    body.dark .sc-row { border-bottom-color: #241c40; }
+    body.dark .sc-key { background: #241c40; color: #c4a8ff; border-color: #342855; }
+    body.dark .shortcuts-close { color: #7b6f9e; }
+
+    /* Help button next to the dice/theme toggles */
+    .help-btn {
+      position: absolute;
+      top: 18px;
+      right: 88px;   /* sits left of random + theme */
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1px solid #ece9f5;
+      background: #faf9fc;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #7C50C8; padding: 0;
+      transition: all 0.15s;
+      font-weight: 700; font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .help-btn:hover { background: #f3eeff; }
+    body.dark .help-btn { background: #1a1438; border-color: #2d2450; color: #c4a8ff; }
+    body.dark .help-btn:hover { background: #241c40; }
+
+    /* ── Flight itinerary overlay ── */
+    #flight-overlay {
+      position: fixed; inset: 0; background: rgba(26, 18, 48, 0.55);
+      display: none; align-items: center; justify-content: center; z-index: 9100;
+      backdrop-filter: blur(4px); animation: fadeIn 0.18s ease;
+    }
+    #flight-overlay.open { display: flex; }
+    .flight-card {
+      background: white; border-radius: 16px; padding: 22px 26px 20px;
+      width: 520px; max-width: calc(100vw - 32px); max-height: calc(100vh - 40px); overflow: auto;
+      box-shadow: 0 30px 60px rgba(20, 12, 50, 0.35);
+      font-family: 'Inter', sans-serif;
+      animation: scCardIn 0.22s cubic-bezier(.2,.9,.3,1);
+    }
+    .flight-head {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+    }
+    .flight-title { font-size: 18px; font-weight: 700; color: #1a1230; display: flex; align-items: center; gap: 8px; }
+    .flight-sub { color: #7b6f9e; font-size: 12.5px; margin-bottom: 16px; }
+    .flight-pickers { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: end; margin-bottom: 18px; }
+    .flight-picker-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: #7b6f9e; margin-bottom: 4px; display: block; font-weight: 600; }
+    .flight-combo { position: relative; }
+    .flight-combo-input {
+      width: 100%;
+      padding: 10px 30px 10px 12px;
+      border: 1.5px solid #e8e2f5;
+      border-radius: 10px;
+      background: #faf8ff;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1a1230;
+      box-sizing: border-box;
+    }
+    .flight-combo-input::placeholder { color: #a89fc4; }
+    .flight-combo-input:focus { outline: none; border-color: #7C50C8; background: #fff; }
+    .flight-combo-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #7b6f9e;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+    .flight-combo-clear:hover { background: #eee4ff; color: #5B21B6; }
+    .flight-combo.has-value .flight-combo-clear { display: flex; }
+    .flight-combo-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 220px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #e8e2f5;
+      border-radius: 10px;
+      box-shadow: 0 12px 28px rgba(60, 30, 120, 0.15);
+      z-index: 10;
+      display: none;
+      padding: 4px;
+    }
+    .flight-combo.open .flight-combo-list { display: block; }
+    .flight-combo-item {
+      padding: 8px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13.5px;
+      color: #1a1230;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.3;
+    }
+    .flight-combo-item .fc-city { color: #7b6f9e; font-size: 12px; margin-left: auto; padding-left: 8px; white-space: nowrap; }
+    .flight-combo-item:hover, .flight-combo-item.kb-hl { background: #f3eeff; }
+    .flight-combo-item.disabled { opacity: 0.4; cursor: not-allowed; }
+    .flight-combo-item.disabled:hover { background: transparent; }
+    .flight-combo-empty { padding: 10px; text-align: center; color: #7b6f9e; font-size: 12.5px; }
+    .flight-picker-select {
+      width: 100%;
+      padding: 9px 11px; border: 1.5px solid #ece9f5; border-radius: 9px;
+      background: #faf9fc; font-family: 'Inter', sans-serif; font-size: 13px;
+      cursor: pointer; transition: border-color 0.15s; color: #1a1230;
+    }
+    .flight-picker-select:focus { outline: none; border-color: #7C50C8; }
+    .flight-swap {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1.5px solid #ece9f5; background: #faf9fc; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #7C50C8; transition: all 0.15s; align-self: end; margin-bottom: 1px;
+    }
+    .flight-swap:hover { background: #f3eeff; transform: rotate(180deg); }
+    .flight-summary {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+      padding: 14px; background: linear-gradient(135deg, #f3eeff, #faf8ff);
+      border-radius: 12px; margin-bottom: 16px;
+    }
+    .flight-stat-val { font-size: 20px; font-weight: 700; color: #5B21B6; line-height: 1; font-variant-numeric: tabular-nums; }
+    .flight-stat-lab { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: #7b6f9e; margin-top: 5px; }
+    .flight-itinerary { margin-bottom: 14px; }
+    .flight-itin-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: #7b6f9e; font-weight: 700; margin-bottom: 10px; }
+    .flight-leg {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+      padding: 10px 0;
+    }
+    .flight-leg-icon {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #f3eeff; color: #7C50C8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .flight-leg-text .t1 { font-weight: 600; color: #1a1230; font-size: 13.5px; }
+    .flight-leg-text .t2 { color: #7b6f9e; font-size: 11.5px; margin-top: 1px; }
+    .flight-leg-dur { color: #5B21B6; font-weight: 600; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .flight-thread { border-left: 2px dashed #d8c8f0; margin-left: 14px; height: 12px; }
+    .flight-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .flight-btn {
+      padding: 8px 14px; border-radius: 9px; font: 600 12.5px 'Inter', sans-serif; cursor: pointer;
+      border: 1.5px solid #ece9f5; background: white; color: #5B21B6;
+      transition: all 0.15s;
+    }
+    .flight-btn:hover { background: #f3eeff; }
+    .flight-btn.primary { background: #7C50C8; color: white; border-color: #7C50C8; }
+    .flight-btn.primary:hover { background: #6B3DB8; border-color: #6B3DB8; }
+    body.dark #flight-overlay { background: rgba(0,0,0,0.62); }
+    body.dark .flight-card { background: #15102a; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+    body.dark .flight-title { color: #f3efff; }
+    body.dark .flight-sub, body.dark .flight-picker-label, body.dark .flight-stat-lab, body.dark .flight-itin-title { color: #9b8fbd; }
+    body.dark .flight-picker-select { background: #1a1438; border-color: #2d2450; color: #e8e3f5; }
+    body.dark .flight-combo-input { background: #1a1438; border-color: #2d2450; color: #e8e3f5; }
+    body.dark .flight-combo-input:focus { background: #241c40; border-color: #7C50C8; }
+    body.dark .flight-combo-input::placeholder { color: #6b5f8c; }
+    body.dark .flight-combo-clear { color: #9b8fbd; }
+    body.dark .flight-combo-clear:hover { background: #2d2450; color: #c4a8ff; }
+    body.dark .flight-combo-list { background: #1a1438; border-color: #2d2450; box-shadow: 0 12px 28px rgba(0,0,0,0.5); }
+    body.dark .flight-combo-item { color: #e8e3f5; }
+    body.dark .flight-combo-item .fc-city { color: #9b8fbd; }
+    body.dark .flight-combo-item:hover, body.dark .flight-combo-item.kb-hl { background: #2a1f50; }
+    body.dark .flight-combo-empty { color: #9b8fbd; }
+    body.dark .flight-swap { background: #1a1438; border-color: #2d2450; color: #c4a8ff; }
+    body.dark .flight-swap:hover { background: #241c40; }
+    body.dark .flight-summary { background: linear-gradient(135deg, #231744, #1a1438); }
+    body.dark .flight-stat-val { color: #c4a8ff; }
+    body.dark .flight-leg-icon { background: #241c40; color: #c4a8ff; }
+    body.dark .flight-leg-text .t1 { color: #f3efff; }
+    body.dark .flight-leg-text .t2 { color: #9b8fbd; }
+    body.dark .flight-thread { border-left-color: #342855; }
+    body.dark .flight-btn { background: #1a1438; border-color: #2d2450; color: #c4a8ff; }
+    body.dark .flight-btn:hover { background: #241c40; }
   </style>
 </head>
 <body>
 
 <!-- ─────────────────── SIDEBAR ─────────────────── -->
 <aside id="sidebar">
-  <!-- Mobile drag handle — tapping opens/closes the bottom sheet -->
-  <div class="sidebar-handle" onclick="toggleMobileSidebar()">
+  <!-- Mobile drag handle — tapping cycles peek → half → full -->
+  <div class="sidebar-handle" onclick="cycleMobileSidebar()">
     <div class="sidebar-handle-bar"></div>
     <span class="sidebar-handle-label" id="handle-label">Team directory</span>
     <div class="sidebar-handle-bar"></div>
+  </div>
+
+  <!-- Mobile-only compact stats strip, visible in PEEK state -->
+  <div id="mobile-peek-stats">
+    <div class="mps-item">
+      <div class="mps-num" id="mps-people">—</div>
+      <div class="mps-label">People</div>
+    </div>
+    <div class="mps-div"></div>
+    <div class="mps-item">
+      <div class="mps-num" id="mps-cities">—</div>
+      <div class="mps-label">Cities</div>
+    </div>
+    <div class="mps-div"></div>
+    <div class="mps-item">
+      <div class="mps-num" id="mps-countries">—</div>
+      <div class="mps-label">Countries</div>
+    </div>
   </div>
   <div class="sidebar-header">
     <div class="logo">
@@ -1119,12 +2488,30 @@
     </div>
     <div class="page-title">Where in the World 🌍</div>
     <div class="page-subtitle">Meet the Clutch team, wherever they are</div>
+    <button class="help-btn" id="help-btn" onclick="openShortcuts()" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">?</button>
+<button class="random-btn" id="random-btn" onclick="pickRandomTeammate()" title="Meet a random teammate" aria-label="Meet a random teammate">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+    </button>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
   </div>
 
   <div class="stats-row">
-    <div class="stat">
-      <div class="stat-num" id="stat-members">—</div>
-      <div class="stat-label">People</div>
+    <div class="stat-people-wrap" onclick="toggleDonutPopover(event)" title="Team composition by role">
+      <div class="stat-donut" id="stat-donut">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><!-- donut drawn by JS --></svg>
+        <div class="stat-donut-center" id="stat-donut-center">—</div>
+      </div>
+      <div class="stat-people-text">
+        <div class="stat-num" id="stat-members">—</div>
+        <div class="stat-label">People</div>
+      </div>
+      <div class="donut-popover" id="donut-popover">
+        <div class="donut-popover-title">Team composition</div>
+        <div id="donut-legend"></div>
+      </div>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
@@ -1138,8 +2525,56 @@
     </div>
   </div>
 
+  <!-- Team-growth sparkline -->
+  <div class="growth-sparkline" id="growth-sparkline">
+    <div class="growth-sparkline-header">
+      <span class="growth-sparkline-title">Team growth</span>
+      <span class="growth-sparkline-range" id="growth-sparkline-range">—</span>
+    </div>
+    <svg class="growth-sparkline-svg" id="growth-sparkline-svg" viewBox="0 0 260 34" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#7C50C8" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#7C50C8" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="growth-area" d=""/>
+      <path class="growth-line" d=""/>
+      <line class="growth-hover-line" x1="0" x2="0" y1="0" y2="34"/>
+      <circle class="growth-hover-dot" r="3" cx="-10" cy="-10"/>
+    </svg>
+    <div class="growth-sparkline-tooltip" id="growth-sparkline-tooltip">&nbsp;</div>
+  </div>
+
+  <!-- Anniversary banner (shown only when there's at least one anniversary or new hire this month) -->
+  <div id="anniv-banner">
+    <button class="anniv-chip" id="anniv-chip-ann" onclick="onAnnivChipClick('anniversaries')" onmouseenter="confettiPuff(this)">
+      <div class="anniv-chip-top"><span>🎉</span><span class="anniv-chip-count" id="anniv-count-ann">0</span></div>
+      <div class="anniv-chip-label" id="anniv-label-ann">Anniversaries this month</div>
+    </button>
+    <button class="anniv-chip" id="anniv-chip-new" onclick="onAnnivChipClick('new-hires')">
+      <div class="anniv-chip-top"><span>🌱</span><span class="anniv-chip-count" id="anniv-count-new">0</span></div>
+      <div class="anniv-chip-label" id="anniv-label-new">New hires</div>
+    </button>
+    <button class="anniv-dismiss" onclick="dismissAnnivBanner(event)" title="Hide until next month">×</button>
+  </div>
+
+  <!-- Active-filters bar (visible whenever any filter is on) -->
+  <div id="active-filters-bar">
+    <span class="afb-label"><span class="afb-count" id="afb-count">—</span><span id="afb-text">filters active</span></span>
+    <button id="share-filters-btn" class="afb-share" onclick="copyShareUrl(this)" title="Copy link to this filtered view">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Share
+    </button>
+    <button onclick="clearAllFilters()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Clear all
+    </button>
+  </div>
+
   <div class="search-wrap">
     <input type="text" class="search-input" id="search-input" placeholder="Search by name, role, or city…" />
+    <span class="search-kbd">/</span>
   </div>
 
   <!-- Team filter pills — shown once data loads -->
@@ -1173,7 +2608,8 @@
   <div id="sort-bar">
     <label for="sort-select">Sort</label>
     <select id="sort-select" onchange="onSortChange()">
-      <option value="default">Default</option>
+      <option value="default">Earliest added</option>
+      <option value="added-desc">Recently added</option>
       <option value="name-az">Name A → Z</option>
       <option value="city-az">City A → Z</option>
       <option value="tenure-asc">Tenure: newest first</option>
@@ -1208,9 +2644,52 @@
 
 <!-- ─────────────────── MAP ─────────────────── -->
 <div id="map"></div>
+
+<!-- Floating stats bar overlay (hidden on mobile) -->
+<div id="stats-float" role="group" aria-label="Team statistics">
+  <div class="stat-float">
+    <div class="stat-float-num accent" id="sf-people">—</div>
+    <div class="stat-float-label">Teammates</div>
+  </div>
+  <div class="stat-float">
+    <div class="stat-float-num" id="sf-cities">—</div>
+    <div class="stat-float-label">Cities</div>
+  </div>
+  <div class="stat-float">
+    <div class="stat-float-num" id="sf-countries">—</div>
+    <div class="stat-float-label">Countries</div>
+  </div>
+  <div class="stat-float">
+    <div class="stat-float-num" id="sf-timezones">—</div>
+    <div class="stat-float-label">Time zones</div>
+  </div>
+</div>
+
 <button id="zoom-all-btn" title="Zoom to see everyone" onclick="zoomToAll()">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V3h4"/><path d="M17 3h4v4"/><path d="M21 17v4h-4"/><path d="M7 21H3v-4"/></svg>
 </button>
+
+<!-- ─────────────────── CITY SPOTLIGHT (opens on cluster click) ─────────────────── -->
+<div id="city-spotlight" role="dialog" aria-label="City spotlight">
+  <div class="cs-head">
+    <div class="cs-headline">
+      <span class="cs-label">City spotlight</span>
+      <div class="cs-city"><span class="cs-flag" id="cs-flag"></span><span id="cs-city-name"></span></div>
+      <div class="cs-country" id="cs-country"></div>
+    </div>
+    <button class="cs-close" onclick="closeCitySpotlight()" aria-label="Close">×</button>
+  </div>
+  <div class="cs-stats">
+    <div class="cs-stat"><div class="cs-stat-val" id="cs-count">—</div><div class="cs-stat-lab">Teammates</div></div>
+    <div class="cs-stat"><div class="cs-stat-val" id="cs-roles">—</div><div class="cs-stat-lab">Teams</div></div>
+    <div class="cs-stat"><div class="cs-stat-val" id="cs-avg">—</div><div class="cs-stat-lab">Avg tenure</div></div>
+  </div>
+  <div class="cs-avatars" id="cs-avatars"></div>
+  <div class="cs-foot">
+    <div class="cs-localtime">🕐 Local time: <strong id="cs-local">—</strong></div>
+    <button class="cs-zoom-btn" onclick="zoomToSpotlightCity()">Zoom in</button>
+  </div>
+</div>
 
 <!-- ─────────────────── MODAL ─────────────────── -->
 <div id="modal-overlay" onclick="closeOnOverlay(event)">
@@ -1382,6 +2861,78 @@ let members = [
 // ════════════════════════════════════════════════════════════
 const PALETTE = ['#7C50C8','#9162D6','#5B38A8','#A673E0','#6440B8','#B288E8','#4A2A98'];
 
+// Role → consistent ring color (used by pins AND list avatars)
+const ROLE_COLORS = {
+  'Co-Founder':          '#1a1230',
+  'Engineering':         '#7C50C8',
+  'Product':             '#5B38A8',
+  'Design':              '#E07B6E',
+  'Customer Success':    '#4A9EC9',
+  'Engagement Managers': '#4A9EC9',
+  'Marketing':           '#D97757',
+  'Finance':             '#2E8B57',
+  'People':              '#C86BA6',
+  'Legal':               '#8B7355',
+  'Operations':          '#C8A547',
+  'Sales':               '#C84545',
+};
+function roleColor(role) {
+  if (!role) return '#7C50C8';
+  if (ROLE_COLORS[role]) return ROLE_COLORS[role];
+  // deterministic fallback from name hash
+  let h = 0;
+  for (let i = 0; i < role.length; i++) h = (h * 31 + role.charCodeAt(i)) | 0;
+  return PALETTE[Math.abs(h) % PALETTE.length];
+}
+
+// Country name → flag emoji (regional indicator letters). Covers the Americas + common variants.
+const COUNTRY_CODES = {
+  'united states': 'US', 'usa': 'US', 'us': 'US', 'u.s.': 'US', 'u.s.a.': 'US',
+  'canada': 'CA', 'mexico': 'MX',
+  'argentina': 'AR', 'brazil': 'BR', 'brasil': 'BR', 'chile': 'CL', 'colombia': 'CO',
+  'peru': 'PE', 'uruguay': 'UY', 'venezuela': 'VE', 'ecuador': 'EC', 'bolivia': 'BO',
+  'paraguay': 'PY', 'guyana': 'GY', 'suriname': 'SR',
+  'costa rica': 'CR', 'panama': 'PA', 'guatemala': 'GT', 'honduras': 'HN',
+  'nicaragua': 'NI', 'el salvador': 'SV', 'belize': 'BZ',
+  'cuba': 'CU', 'dominican republic': 'DO', 'haiti': 'HT', 'jamaica': 'JM',
+  'puerto rico': 'PR', 'trinidad and tobago': 'TT', 'bahamas': 'BS', 'barbados': 'BB',
+  // Also a few global common ones (cheap to include, future-proof)
+  'united kingdom': 'GB', 'uk': 'GB', 'england': 'GB', 'spain': 'ES',
+  'portugal': 'PT', 'france': 'FR', 'germany': 'DE', 'italy': 'IT',
+  'india': 'IN', 'australia': 'AU', 'japan': 'JP',
+};
+function countryFlag(country) {
+  if (!country) return '';
+  const code = COUNTRY_CODES[country.toLowerCase().trim()];
+  if (!code) return '';
+  // Regional indicator symbols: A = 0x1F1E6
+  return String.fromCodePoint(...[...code].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+}
+function memberCountry(m) {
+  if (!m.city) return '';
+  const parts = m.city.split(',');
+  return parts[parts.length - 1].trim();
+}
+function memberFlag(m) {
+  return countryFlag(memberCountry(m));
+}
+
+// Tenure ring — thickness + color based on years at Clutch
+function tenureRing(yearVal) {
+  if (!yearVal) return null;
+  const [y, mo] = String(yearVal).split('-');
+  const joinDate = new Date(parseInt(y), mo ? parseInt(mo) - 1 : 0, 1);
+  if (isNaN(joinDate.getTime())) return null;
+  const months = (Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44);
+  const years  = months / 12;
+  if (years < 0.25) return { color: '#d4f4d4', years, noRing: false }; // new hire — faint green
+  if (years < 1)    return { color: '#e0d4f4', years, noRing: false }; // <1yr — faint purple
+  if (years < 2)    return { color: '#b9a0e0', years, noRing: false }; // 1-2yr
+  if (years < 3)    return { color: '#7C50C8', years, noRing: false }; // 2-3yr — brand purple
+  if (years < 5)    return { color: '#5B21B6', years, noRing: false }; // 3-5yr — deep purple
+  return { color: '#D4AF37', years, noRing: false };                    // 5+yr — GOLD
+}
+
 function avatarColor(name)   { return PALETTE[name.charCodeAt(0) % PALETTE.length]; }
 function memberColor(member) { return member.role === 'Co-Founder' ? '#1a1230' : avatarColor(member.name); }
 function initials(name)     { return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
@@ -1396,11 +2947,16 @@ function gravatarUrl(email, size) {
   return 'https://www.gravatar.com/avatar/' + hash + '?s=' + (size||80) + '&d=404';
 }
 
-// Called by onerror on gravatar <img> tags — swaps to an initials div
+// Called by onerror on gravatar <img> tags — swaps to an initials div.
+// Uses absolute-positioned inner span for pixel-perfect centering (flex
+// centering with Inter bold at small sizes lands slightly high-right).
 function onGravatarError(el, ini, color, size, fs) {
   var div = document.createElement('div');
-  div.style.cssText = 'width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:'+fs+'px;font-family:Inter,sans-serif;flex-shrink:0;overflow:hidden;';
-  div.textContent = ini;
+  div.style.cssText = 'width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';color:white;font-weight:700;font-size:'+fs+'px;font-family:Inter,sans-serif;flex-shrink:0;overflow:hidden;position:relative;line-height:1;letter-spacing:0;';
+  var span = document.createElement('span');
+  span.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,calc(-50% + 0.5px));line-height:1;';
+  span.textContent = ini;
+  div.appendChild(span);
   if (el.parentNode) el.parentNode.replaceChild(div, el);
 }
 
@@ -1480,20 +3036,158 @@ function slackCopyHandle(handle) {
 // ════════════════════════════════════════════════════════════
 // MAP INIT
 // ════════════════════════════════════════════════════════════
+// Clutch operates across the Americas — center and constrain the map so
+// users only see N+S America, not Europe/Asia/Africa.
+const AMERICAS_CENTER = [8, -78];
+const AMERICAS_ZOOM   = 3;
+// Tight bounds hugging just the Americas — no Africa/Europe/Asia visible.
+const AMERICAS_BOUNDS = L.latLngBounds(
+  [-57, -170],  // SW: Tierra del Fuego / west of Alaska
+  [ 74,  -30]   // NE: Arctic Canada / just east of Greenland
+);
+
 const map = L.map('map', {
-  center: [15, -80],
-  zoom: 3,
-  minZoom: 2,
+  center: AMERICAS_CENTER,
+  zoom: AMERICAS_ZOOM,
+  minZoom: 3,              // can't zoom out enough to reveal other continents
   zoomControl: false,
   attributionControl: true,
+  maxBounds: AMERICAS_BOUNDS,
+  maxBoundsViscosity: 1.0, // hard clamp — can't drag past the Americas
+  worldCopyJump: false,
+  inertia: false,
 });
 
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+const LIGHT_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+const DARK_TILES  = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+let tileLayer = L.tileLayer(LIGHT_TILES, {
   attribution: 'Tiles &copy; <a href="https://www.esri.com">Esri</a>',
   maxZoom: 16,
+  bounds: AMERICAS_BOUNDS,      // don't render tiles outside the Americas
+  noWrap: true,
 }).addTo(map);
 
 L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+// ── Theme (light/dark) ──
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.body.classList.toggle('dark', isDark);
+  // Swap tile layer
+  if (tileLayer) {
+    tileLayer.setUrl(isDark ? DARK_TILES : LIGHT_TILES);
+  }
+  // Re-render sparkline in case stroke color depends on body class (CSS handles it, but repaint safely)
+  if (typeof renderGrowthSparkline === 'function') renderGrowthSparkline();
+}
+
+function toggleTheme() {
+  const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+  try { localStorage.setItem('clutchmap_theme', next); } catch (e) {}
+  applyTheme(next);
+}
+
+// Initialize from saved preference (or system). If no saved preference, follow the
+// OS `prefers-color-scheme` and keep listening so the map flips automatically when
+// the user's system theme changes (e.g. macOS Auto at sundown).
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('clutchmap_theme'); } catch (e) {}
+  const systemPrefersDark = () =>
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const initial = saved || (systemPrefersDark() ? 'dark' : 'light');
+  applyTheme(initial);
+  // Only auto-track system changes if the user hasn't set an explicit preference
+  if (!saved && window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e) => {
+      // Still no saved preference? Follow the system.
+      let stillSaved = null;
+      try { stillSaved = localStorage.getItem('clutchmap_theme'); } catch (_) {}
+      if (!stillSaved) applyTheme(e.matches ? 'dark' : 'light');
+    };
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else if (mq.addListener) mq.addListener(handler);
+  }
+})();
+
+// ══════════════════════════════════════════════════════
+// RANDOM TEAMMATE DIE
+// ══════════════════════════════════════════════════════
+let lastRandomIdx = null;
+function pickRandomTeammate() {
+  const btn = document.getElementById('random-btn');
+  if (!members.length) return;
+  // Respect active filters: pick from the currently filtered list
+  const pool = getFilteredList();
+  if (!pool.length) {
+    // nothing to pick — shake the button
+    if (btn) { btn.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}], {duration:260}); }
+    return;
+  }
+  let pick;
+  // Don't pick the same person twice in a row if pool > 1
+  for (let attempts = 0; attempts < 8; attempts++) {
+    pick = pool[Math.floor(Math.random() * pool.length)];
+    const idx = members.indexOf(pick);
+    if (idx !== lastRandomIdx || pool.length === 1) { lastRandomIdx = idx; break; }
+  }
+  if (btn) {
+    btn.classList.remove('rolling');
+    void btn.offsetWidth;           // restart animation
+    btn.classList.add('rolling');
+  }
+  const idx = members.indexOf(pick);
+  setTimeout(() => setActive(idx), 300);
+}
+
+// ══════════════════════════════════════════════════════
+// CONFETTI — tiny canvas-free particle burst using absolutely-positioned divs
+// ══════════════════════════════════════════════════════
+function confettiBurst(originEl, opts = {}) {
+  if (!originEl) return;
+  const rect = originEl.getBoundingClientRect();
+  const count = opts.count || 18;
+  const colors = opts.colors || ['#7C50C8', '#A673E0', '#5B21B6', '#F5C518', '#E07B6E', '#4A9EC9'];
+  const container = document.createElement('div');
+  container.style.cssText = `position:fixed; pointer-events:none; top:${rect.top + rect.height/2}px; left:${rect.left + rect.width/2}px; z-index:9999;`;
+  document.body.appendChild(container);
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+    const vel   = 40 + Math.random() * 60;
+    const dx    = Math.cos(angle) * vel;
+    const dy    = Math.sin(angle) * vel - 20; // favor upward
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const rot   = Math.random() * 360;
+    const rotEnd= rot + (Math.random() - 0.5) * 720;
+    const w     = 4 + Math.random() * 4;
+    const h     = 6 + Math.random() * 6;
+    p.style.cssText = `
+      position:absolute; left:0; top:0;
+      width:${w}px; height:${h}px;
+      background:${color};
+      border-radius:1px;
+      transform: translate(-50%,-50%) rotate(${rot}deg);
+      animation: confettiFall ${700 + Math.random()*400}ms cubic-bezier(.2,.6,.3,1) forwards;
+      --dx:${dx}px; --dy:${dy}px; --rot-end:${rotEnd}deg;
+    `;
+    container.appendChild(p);
+  }
+  setTimeout(() => container.remove(), 1600);
+}
+
+// Tiny puff for chip hover (much cheaper — 6 particles, short range)
+let _lastChipPuff = 0;
+function confettiPuff(originEl) {
+  if (!originEl) return;
+  const now = Date.now();
+  if (now - _lastChipPuff < 700) return;  // throttle
+  _lastChipPuff = now;
+  confettiBurst(originEl, { count: 7, colors: ['#7C50C8', '#F5C518', '#E07B6E'] });
+}
 
 // ── Marker cluster group ──
 const markerCluster = L.markerClusterGroup({
@@ -1503,23 +3197,41 @@ const markerCluster = L.markerClusterGroup({
   showCoverageOnHover: false,
   iconCreateFunction(cluster) {
     const count = cluster.getChildCount();
-    // Scale bubble size with count — noticeable even for small groups
-    const size    = Math.min(Math.round(34 + count * 3.5), 70);
-    const fontSize = size < 44 ? 12 : size < 54 ? 13 : 14;
+    // Tiered sizing: small / medium / large (and density classes for the glow)
+    let size, fontSize, density;
+    if (count < 5) {
+      size = 34; fontSize = 12; density = '';
+    } else if (count < 10) {
+      size = 44; fontSize = 14; density = 'dense';
+    } else if (count < 25) {
+      size = 54; fontSize = 16; density = 'dense';
+    } else {
+      size = 64; fontSize = 18; density = 'very-dense';
+    }
     return L.divIcon({
-      html: `<div style="width:${size}px;height:${size}px;border-radius:50%;
-        background:#7C50C8;border:3px solid white;
-        box-shadow:0 3px 12px rgba(80,40,160,0.35);
-        color:white;font-weight:700;font-size:${fontSize}px;
-        font-family:'Inter',sans-serif;
-        display:flex;align-items:center;justify-content:center;">${count}</div>`,
-      className: '',
+      html: `<div class="cc-bubble ${density}" style="width:${size}px;height:${size}px;font-size:${fontSize}px;">${count}</div>`,
+      className: 'clutch-cluster',
       iconSize:   [size, size],
       iconAnchor: [size / 2, size / 2],
     });
   },
 });
 markerCluster.addTo(map);
+
+// When markercluster spiderfies (multiple pins at near-identical coords expand
+// into a spiral at max zoom), re-anchor the active marker's popup. Spiderfy moves
+// the marker DOM to a new position but the popup can be left orphaned/closed —
+// explicitly reopen it on the active marker.
+markerCluster.on('spiderfied unspiderfied', (e) => {
+  if (activeIndex == null) return;
+  const marker = leafletMarkers[activeIndex];
+  if (!marker || marker._userClosed) return;
+  setTimeout(() => {
+    if (activeIndex != null && !marker._userClosed && !marker.isPopupOpen()) {
+      marker.openPopup();
+    }
+  }, 120);
+});
 
 // ── Cluster click: show those members in sidebar ──
 let clusterView = null; // null or array of member indices
@@ -1540,6 +3252,13 @@ markerCluster.on('clusterclick', function(e) {
 
   renderList(indices.map(i => members[i]).filter(Boolean));
   // Don't call renderMapMarkers — keep map state as-is so zoom still works
+  if (typeof updateActiveFiltersBar === 'function') updateActiveFiltersBar();
+
+  // Open the rich City Spotlight card (only for clusters representing a
+  // single city — i.e. most teammates share the same city string. If the
+  // cluster spans multiple cities, skip the card and just let the filtering
+  // behavior above stand on its own.)
+  openCitySpotlight(indices);
 });
 
 function clearClusterView() {
@@ -1547,7 +3266,166 @@ function clearClusterView() {
   const banner = document.getElementById('cluster-view-banner');
   if (banner) banner.classList.remove('visible');
   renderListFiltered();
+  if (typeof updateActiveFiltersBar === 'function') updateActiveFiltersBar();
+  closeCitySpotlight();
 }
+
+// ════════════════════════════════════════════════════════════
+// CITY SPOTLIGHT — rich info card that opens on cluster click
+// ════════════════════════════════════════════════════════════
+let _spotlightState = null; // { indices, cityKey, lat, lng, tz }
+
+function _pickDominantCity(indices) {
+  // Most clusters represent a single real-world city. Count city strings
+  // and pick the majority one; include every member whose city matches.
+  const counts = {};
+  for (const i of indices) {
+    const city = (members[i]?.city || '').trim();
+    if (!city) continue;
+    counts[city] = (counts[city] || 0) + 1;
+  }
+  let bestCity = '', bestCount = 0;
+  for (const [city, c] of Object.entries(counts)) {
+    if (c > bestCount) { bestCity = city; bestCount = c; }
+  }
+  return bestCity;
+}
+
+function _formatLocalTime(lng) {
+  // Rough: UTC offset = round(lng/15). Good enough for a "what time is it there" glance.
+  const offset = Math.round(lng / 15);
+  const now = new Date();
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  const d = new Date(utcMs + offset * 3600000);
+  const h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = ((h + 11) % 12) + 1;
+  const icon = (h >= 6 && h < 19) ? '☀️' : '🌙';
+  return `${icon} ${h12}:${String(m).padStart(2, '0')}${ampm}`;
+}
+
+function openCitySpotlight(indices) {
+  if (!indices?.length) return;
+  const el = document.getElementById('city-spotlight');
+  if (!el) return;
+
+  const dominantCity = _pickDominantCity(indices);
+  // Only show spotlight when we have a clear city — mixed-city clusters get
+  // the sidebar filtering but no spotlight (avoids "Spotlight on: same location").
+  // Close any stale card so the user isn't left looking at the previous city.
+  if (!dominantCity) { closeCitySpotlight(); return; }
+
+  // Members in THIS city (filter the passed indices down to city-matching ones)
+  const cityIdxs = indices.filter(i => (members[i]?.city || '').trim() === dominantCity);
+  if (cityIdxs.length < 2) { closeCitySpotlight(); return; } // single-person cities — let the pin popup speak
+
+  // If the spotlight is ALREADY open for a different city, do a quick
+  // cross-fade so the switch feels intentional rather than static. Small
+  // 140ms window — long enough to perceive, short enough not to feel slow.
+  const alreadyVisible = el.classList.contains('visible');
+  const switchingCities = alreadyVisible && _spotlightState &&
+    (_spotlightState.cityKey !== dominantCity);
+  if (switchingCities) {
+    el.classList.add('switching');
+    setTimeout(() => el.classList.remove('switching'), 180);
+  }
+
+  const firstMember = members[cityIdxs[0]];
+  const [cityName, ...rest] = dominantCity.split(',').map(s => s.trim());
+  const country = rest.join(', ');
+  const flag = memberFlag(firstMember);
+
+  // Distinct roles
+  const roles = new Set(cityIdxs.map(i => members[i]?.role).filter(Boolean));
+
+  // Avg tenure (in years, rounded to 1 decimal)
+  const now = Date.now();
+  const tenures = cityIdxs.map(i => {
+    const y = members[i]?.year;
+    if (!y) return null;
+    const [yy, mm] = String(y).split('-');
+    const d = new Date(parseInt(yy), mm ? parseInt(mm) - 1 : 0, 1);
+    return isNaN(d.getTime()) ? null : (now - d.getTime()) / (365.25 * 24 * 3600 * 1000);
+  }).filter(t => t != null);
+  const avgYears = tenures.length ? tenures.reduce((a, b) => a + b, 0) / tenures.length : 0;
+
+  // Populate DOM
+  document.getElementById('cs-flag').textContent = flag;
+  document.getElementById('cs-city-name').textContent = cityName || 'Unknown';
+  document.getElementById('cs-country').textContent = country || '';
+  document.getElementById('cs-count').textContent = cityIdxs.length;
+  document.getElementById('cs-roles').textContent = roles.size;
+  document.getElementById('cs-avg').textContent = avgYears >= 1
+    ? `${avgYears.toFixed(1)}y`
+    : `${Math.round(avgYears * 12)}mo`;
+
+  // Avatar collage — up to 10, then "+N more" chip
+  const MAX_AVATARS = 10;
+  const shown = cityIdxs.slice(0, MAX_AVATARS);
+  const overflow = cityIdxs.length - shown.length;
+  const avatarsHtml = shown.map(i => {
+    const m = members[i];
+    if (!m) return '';
+    const img = m.photo || (m.email ? gravatarUrl(m.email, 72) : null);
+    const color = memberColor(m);
+    const ini = initials(m.name);
+    const flag = memberFlag(m);
+    // Flag badge rides the bottom-right edge whenever we don't have a real
+    // uploaded photo on file. Gravatar URLs often 404 to initials anyway;
+    // showing the flag next to a gravatar is still a helpful identity cue.
+    const flagBadge = (!m.photo && flag)
+      ? `<span class="cs-avatar-flag" aria-hidden="true">${flag}</span>`
+      : '';
+    const inner = img
+      ? `<img src="${img}" alt="${escapeHtml(m.name)}" onerror="onGravatarError(this,'${ini}','${color}',38,13)" />`
+      : `<div class="cs-avatar-ini" style="background:${color}"><span class="cs-avatar-ini-text">${ini}</span></div>`;
+    return `<div class="cs-avatar" onclick="closeCitySpotlight();setActive(${i})" title="${escapeHtml(m.name)} · ${escapeHtml(m.role || '')}">
+      ${inner}
+      ${flagBadge}
+      <div class="cs-avatar-tip">${escapeHtml(m.name)}</div>
+    </div>`;
+  }).join('');
+  const moreHtml = overflow > 0
+    ? `<div class="cs-avatar-more" title="${overflow} more in ${escapeHtml(cityName || '')}">+${overflow}</div>`
+    : '';
+  document.getElementById('cs-avatars').innerHTML = avatarsHtml + moreHtml;
+
+  // Local time
+  document.getElementById('cs-local').textContent = _formatLocalTime(firstMember.lng || 0);
+
+  // Cache state for zoom button
+  _spotlightState = {
+    indices: cityIdxs,
+    lat: firstMember.lat,
+    lng: firstMember.lng,
+    cityKey: dominantCity,
+  };
+
+  el.classList.add('visible');
+}
+
+function closeCitySpotlight() {
+  const el = document.getElementById('city-spotlight');
+  if (el) el.classList.remove('visible');
+  _spotlightState = null;
+}
+
+function zoomToSpotlightCity() {
+  if (!_spotlightState) return;
+  const { lat, lng, indices } = _spotlightState;
+  // Zoom in to reveal individual pins. If the cluster would still cluster
+  // at zoom 10, zoomToShowLayer handles the edge. Otherwise just fly.
+  map.flyTo([lat, lng], 11, { duration: 1.1, easeLinearity: 0.25 });
+  closeCitySpotlight();
+}
+
+// Refresh local time every minute while the card is open
+setInterval(() => {
+  if (_spotlightState && document.getElementById('city-spotlight').classList.contains('visible')) {
+    document.getElementById('cs-local').textContent = _formatLocalTime(_spotlightState.lng);
+  }
+}, 60000);
 
 // ════════════════════════════════════════════════════════════
 // MARKERS
@@ -1555,26 +3433,30 @@ function clearClusterView() {
 let leafletMarkers = [];
 let activeIndex    = null;
 
-function makeMarkerIcon(member) {
-  const color  = memberColor(member);
+function makeMarkerIcon(member, opts = {}) {
+  const ring   = roleColor(member.role);
+  const bg     = memberColor(member); // fallback fill color for initials
   const ini    = initials(member.name);
   const imgUrl = member.photo || (member.email ? gravatarUrl(member.email, 80) : null);
-  const inner  = imgUrl
-    ? `<img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="onGravatarError(this,'${ini}','${color}',38,11)" />`
-    : `<span>${ini}</span>`;
+  const active = opts.active ? ' is-active' : '';
+
+  const inner = imgUrl
+    ? `<img src="${imgUrl}" class="pin-img" onerror="onGravatarError(this,'${ini}','${bg}',34,12)" />`
+    : `<div class="pin-initials" style="background:${bg}">${ini}</div>`;
 
   const html = `
-    <div style="width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-      border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.22);background:${color};
-      display:flex;align-items:center;justify-content:center;overflow:hidden;">
-      <div style="transform:rotate(45deg);width:100%;height:100%;
-        display:flex;align-items:center;justify-content:center;
-        color:white;font-weight:700;font-size:11px;font-family:'Inter',sans-serif;overflow:hidden;">
-        ${inner}
-      </div>
+    <div class="pin-wrap${active}" style="--ring:${ring}">
+      <div class="pin-avatar">${inner}</div>
+      <div class="pin-tail"></div>
     </div>`;
 
-  return L.divIcon({ html, className: '', iconSize: [38,38], iconAnchor: [19,38], popupAnchor: [0,-42] });
+  return L.divIcon({
+    html,
+    className: 'clutch-pin',
+    iconSize:   [42, 50],
+    iconAnchor: [21, 48],    // tail tip sits on the geographic point
+    popupAnchor:[0, -46],
+  });
 }
 
 function makePopupContent(member) {
@@ -1665,8 +3547,18 @@ function renderAll() {
     const lat = member._jLat ?? member.lat;
     const lng = member._jLng ?? member.lng;
     const marker = L.marker([lat, lng], { icon: makeMarkerIcon(member) });
-    marker.bindPopup(makePopupContent(member), { maxWidth: 300 });
+    marker.bindPopup(makePopupContent(member), { maxWidth: 300, autoClose: false, closeOnClick: false, autoPan: false, keepInView: false });
+    // Hover tooltip (name + role) — desktop only, hidden on touch/mobile via CSS
+    const safeName = String(member.name).replace(/</g, '&lt;');
+    const safeRole = String(member.role || '').replace(/</g, '&lt;');
+    marker.bindTooltip(
+      `<div class="tt-name">${safeName}</div>${safeRole ? `<div class="tt-role">${safeRole}</div>` : ''}`,
+      { className: 'pin-tooltip', direction: 'top', offset: [0, -32], opacity: 1 }
+    );
     marker.on('click', () => setActive(i));
+    // Hover sync — pin hover pulses the list row
+    marker.on('mouseover', () => setListHover(i, true));
+    marker.on('mouseout',  () => setListHover(i, false));
     leafletMarkers.push(marker);
   });
 
@@ -1674,6 +3566,35 @@ function renderAll() {
   renderSecondaryFilters();
   renderListFiltered(); // calls renderMapMarkers() internally — adds only filtered markers
   updateStats();
+}
+
+// ── Hover sync between list ↔ pins ──
+function setPinHover(i, on) {
+  const marker = leafletMarkers[i];
+  if (!marker) return;
+  const el = marker.getElement && marker.getElement();
+  const pin = el && el.querySelector('.pin-wrap');
+  if (pin) pin.classList.toggle('pulse', !!on);
+}
+function setListHover(i, on) {
+  const row = document.querySelector(`.member-item[data-index="${i}"]`);
+  if (row) {
+    row.classList.toggle('kb-focus', !!on);
+    if (on) {
+      // Only scroll if the row is NOT already in view — avoids jumpy behavior when the pin
+      // and its row are both visible, and prevents repeated scrolling on re-hover.
+      const list = document.getElementById('member-list');
+      if (list) {
+        const rr = row.getBoundingClientRect();
+        const lr = list.getBoundingClientRect();
+        const inView = rr.top >= lr.top + 4 && rr.bottom <= lr.bottom - 4;
+        if (!inView) {
+          const targetTop = row.offsetTop - list.offsetTop - (list.clientHeight / 2 - row.clientHeight / 2);
+          list.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+        }
+      }
+    }
+  }
 }
 
 // Add only the currently-filtered members' markers to the cluster
@@ -1707,7 +3628,26 @@ function renderList(list) {
       : `${[...activeFilter].join(', ')} · ${list.length}`;
 
   if (!list.length) {
-    el.innerHTML = '<div class="empty-state">No teammates found</div>';
+    const hasFilters = typeof countActiveFilters === 'function' && countActiveFilters() > 0;
+    el.innerHTML = hasFilters ? `
+      <div class="empty-state rich">
+        <div class="empty-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <div class="empty-title">No matches</div>
+        <div class="empty-sub">Try relaxing a filter or clearing them all to see the full team again.</div>
+        <button onclick="clearAllFilters()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Clear all filters
+        </button>
+      </div>` : `
+      <div class="empty-state rich">
+        <div class="empty-icon">🌍</div>
+        <div class="empty-title">No teammates yet</div>
+        <div class="empty-sub">Add your first teammate to put Clutch on the map.</div>
+      </div>`;
     return;
   }
 
@@ -1720,9 +3660,19 @@ function renderList(list) {
 
     const ini    = initials(member.name);
     const imgUrl = member.photo || (member.email ? gravatarUrl(member.email, 80) : null);
+    // "Has photo" = has a real uploaded photo on file. Gravatar is third-party
+    // and often returns a default/missing result, so we still show the flag
+    // badge for gravatar-only entries — it's a useful identity cue when the
+    // initials fallback kicks in, and it doesn't overpower a real gravatar.
+    const hasPhoto = !!member.photo;
     const avatarInner = imgUrl
       ? `<img src="${imgUrl}" alt="${member.name}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" onerror="onGravatarError(this,'${ini}','${color}',40,14)" />`
-      : ini;
+      : `<span class="avatar-ini-text">${ini}</span>`;
+
+    const ring = tenureRing(member.year);
+    const ringStyle = ring ? `style="--tenure-ring:${ring.color}"` : '';
+    const ringClass = ring ? '' : ' no-ring';
+    const flag = memberFlag(member);
 
     const updatedStr = member.updatedAt ? formatDate(member.updatedAt) : '';
     const tenure     = getTenureBadge(member.year);
@@ -1739,11 +3689,14 @@ function renderList(list) {
       <div class="member-checkbox" onclick="event.stopPropagation(); toggleSelectItem(${i})">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div class="avatar" style="background:${color};">${avatarInner}</div>
+      <div class="avatar-ring${ringClass}" ${ringStyle}>
+        <div class="avatar" style="background:${color};">${avatarInner}</div>
+        ${!hasPhoto && flag ? `<span class="avatar-flag" aria-hidden="true">${flag}</span>` : ''}
+      </div>
       <div class="member-info">
         <div class="member-name">${member.name}</div>
         <div class="member-role">${member.role}${tenure ? ` &nbsp;<span class="tenure-badge" style="background:${tenure.bg};color:${tenure.color};">${tenure.label}</span>` : ''}</div>
-        <div class="member-location">📍 ${member.city}</div>
+        <div class="member-location">${flag ? `<span class="location-flag">${flag}</span>` : '📍 '}${member.city}</div>
         ${updatedStr ? `<div class="member-updated">Updated ${updatedStr}</div>` : ''}
         ${socialHtml}
       </div>
@@ -1758,38 +3711,486 @@ function renderList(list) {
 
     if (selectedItems.has(i)) div.classList.add('selected');
     div.onclick = () => selectMode ? toggleSelectItem(i) : setActive(i);
+    // Hover sync: list row hover → pulse the corresponding pin
+    div.addEventListener('mouseenter', () => setPinHover(i, true));
+    div.addEventListener('mouseleave', () => setPinHover(i, false));
     el.appendChild(div);
   });
 }
 
 function setActive(index) {
+  // Close any previously-open popup immediately and stop its babysitter. This
+  // gives the "click another pin and the first closes" behavior regardless of
+  // whether the user dismissed the prior popup.
+  if (activeIndex !== null && activeIndex !== index) {
+    const prev = leafletMarkers[activeIndex];
+    if (prev) {
+      prev._userClosed = true; // stop babysit reopening
+      if (prev.isPopupOpen()) prev.closePopup();
+    }
+  }
   activeIndex = index;
   const member = members[index];
   maybeOpenMobileSidebar();
+
+  // Keep the City Spotlight in sync — if the clicked person is part of a
+  // multi-person metro, pop the spotlight for that metro alongside their
+  // individual popup. If they're the only one in their city, close any
+  // stale spotlight so we're not lying about context.
+  try {
+    const memberCity = (member?.city || '').trim();
+    const currentCity = _spotlightState?.cityKey || '';
+    if (memberCity && memberCity !== currentCity) {
+      const sameCityIdxs = members
+        .map((m, i) => ({ m, i }))
+        .filter(({ m }) => (m?.city || '').trim() === memberCity)
+        .map(({ i }) => i);
+      if (sameCityIdxs.length >= 2) {
+        openCitySpotlight(sameCityIdxs);
+      } else {
+        // No cohort in that city — close any existing card rather than lie.
+        closeCitySpotlight();
+      }
+    }
+  } catch (err) { /* defensive — never let spotlight sync break navigation */ }
 
   document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.member-item').forEach(el => {
     if (el.querySelector('.member-name')?.textContent === member.name) el.classList.add('active');
   });
 
-  map.flyTo([member.lat, member.lng], 8, { duration: 1.2, easeLinearity: 0.25 });
-  setTimeout(() => leafletMarkers[index]?.openPopup(), 1000);
+  // Open (and keep open) the popup. We use markerCluster.zoomToShowLayer which
+  // zooms to the minimum level where the marker is NOT inside a cluster, then
+  // invokes our callback. For coord-shared pins (both Amelias, São Paulo team,
+  // etc) this goes past disableClusteringAtZoom and past any spiderfy radius.
+  // We DO NOT call flyTo ourselves because it would race zoomToShowLayer and
+  // strand the marker inside a cluster bubble where openPopup() silently fails.
+  const marker = leafletMarkers[index];
+  if (marker) {
+    const openIt = () => {
+      if (!marker.isPopupOpen()) marker.openPopup();
+      if (isAnniversaryThisMonth(member)) {
+        setTimeout(() => {
+          const pop = document.querySelector('.leaflet-popup-content-wrapper');
+          if (pop) confettiBurst(pop, { count: 22 });
+        }, 60);
+      }
+    };
+    // markercluster silently closes popups whenever it repaints (cluster animation,
+    // tile load, marker reshuffle, etc) — and for pins at overlapping coordinates
+    // these repaints can happen LONG after the initial zoom (e.g. any subsequent
+    // pan, hover, or tile-load). Rather than time-box it, we babysit indefinitely
+    // for as long as this marker is the "active" one. User-close via the × sets
+    // _userClosed=true and stops the babysitter.
+    marker._userClosed = false;
+    if (marker._babysit) clearInterval(marker._babysit);
+    marker._babysit = setInterval(() => {
+      if (activeIndex !== index || marker._userClosed) {
+        clearInterval(marker._babysit);
+        marker._babysit = null;
+        return;
+      }
+      if (marker.isPopupOpen()) return;
+      // If marker has a DOM icon (on-screen and unclustered), just reopen.
+      // If it's currently clustered (no icon) we DON'T try to zoom-to-show —
+      // the user likely panned/zoomed away intentionally, and yanking them
+      // back would be disorienting. They can click the pin or list row again.
+      if (marker._icon) {
+        marker.openPopup();
+      }
+    }, 150);
 
-  document.querySelectorAll('.member-item').forEach(el => {
-    if (el.querySelector('.member-name')?.textContent === member.name) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Wire the close × button. Use the MAP-level popupopen event — it fires
+    // reliably after the popup DOM is in place, unlike the marker-level one which
+    // can be missed when markercluster repaints. Keep rewiring on every popupopen
+    // because the babysitter may reopen the popup multiple times and each reopen
+    // yields a fresh close button element.
+    const onMapPopupOpen = (e) => {
+      if (e.popup !== marker.getPopup()) return;
+      const btn = document.querySelector('.leaflet-popup-close-button');
+      if (btn && !btn._wired) {
+        btn._wired = true;
+        L.DomEvent.on(btn, 'click', (ev) => {
+          L.DomEvent.stop(ev);
+          marker._userClosed = true;
+          activeIndex = null;
+          map.closePopup();
+        });
+      }
+    };
+    map.on('popupopen', onMapPopupOpen);
+    // Clean up the close-button listener once we stop tracking this marker.
+    const cleanupInterval = setInterval(() => {
+      if (marker._userClosed || activeIndex !== index) {
+        map.off('popupopen', onMapPopupOpen);
+        clearInterval(cleanupInterval);
+      }
+    }, 300);
+
+    if (markerCluster.hasLayer(marker) && typeof markerCluster.zoomToShowLayer === 'function') {
+      markerCluster.zoomToShowLayer(marker, openIt);
+    } else {
+      setTimeout(openIt, 1200);
     }
-  });
+  }
+
+  // Scroll the list (not the window) so the active row is centered. Using scrollIntoView
+  // on list items can scroll the whole page and break popup layout.
+  const activeRow = [...document.querySelectorAll('.member-item')]
+    .find(el => el.querySelector('.member-name')?.textContent === member.name);
+  const listEl = document.getElementById('member-list');
+  if (activeRow && listEl) {
+    const rr = activeRow.getBoundingClientRect();
+    const lr = listEl.getBoundingClientRect();
+    const inView = rr.top >= lr.top + 4 && rr.bottom <= lr.bottom - 4;
+    if (!inView) {
+      const targetTop = activeRow.offsetTop - listEl.offsetTop - (listEl.clientHeight / 2 - activeRow.clientHeight / 2);
+      listEl.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+    }
+  }
 }
 
 function updateStats() {
-  document.getElementById('stat-members').textContent = members.length;
+  const peopleN = members.length;
   const countries = new Set(members.map(m => {
     const parts = m.city.split(',');
     return parts[parts.length - 1].trim();
   }));
+  const cities = new Set(members.map(m => m.city));
+  const tzs    = estimateTimezones(members);
+
+  // Sidebar compact stats
+  document.getElementById('stat-members').textContent   = peopleN;
   document.getElementById('stat-countries').textContent = countries.size;
-  document.getElementById('stat-cities').textContent = new Set(members.map(m => m.city)).size;
+  document.getElementById('stat-cities').textContent    = cities.size;
+
+  // Floating (desktop) stats
+  const sfP = document.getElementById('sf-people');
+  const sfC = document.getElementById('sf-cities');
+  const sfK = document.getElementById('sf-countries');
+  const sfT = document.getElementById('sf-timezones');
+  if (sfP) sfP.textContent = peopleN;
+  if (sfC) sfC.textContent = cities.size;
+  if (sfK) sfK.textContent = countries.size;
+  if (sfT) sfT.textContent = tzs;
+
+  // Mobile peek stats
+  const mp = document.getElementById('mps-people');
+  const mc = document.getElementById('mps-cities');
+  const mk = document.getElementById('mps-countries');
+  if (mp) mp.textContent = peopleN;
+  if (mc) mc.textContent = cities.size;
+  if (mk) mk.textContent = countries.size;
+
+  // Anniversary banner
+  updateAnnivBanner();
+  // Team-growth sparkline
+  if (typeof renderGrowthSparkline === 'function') renderGrowthSparkline();
+  // Team composition donut (next to People stat)
+  if (typeof renderTeamDonut === 'function') renderTeamDonut();
+}
+
+// ── Team composition donut (next to the People stat) ──
+function renderTeamDonut() {
+  const svg = document.querySelector('#stat-donut svg');
+  const centerEl = document.getElementById('stat-donut-center');
+  const legendEl = document.getElementById('donut-legend');
+  if (!svg || !members.length) return;
+
+  // Bucket members by role
+  const byRole = {};
+  members.forEach(m => {
+    const r = m.role || 'Other';
+    byRole[r] = (byRole[r] || 0) + 1;
+  });
+  const rolesSorted = Object.entries(byRole).sort((a, b) => b[1] - a[1]);
+
+  // Donut math: 42x42 viewBox, centre (21,21), r=15.5  (circumference ≈ 97.39)
+  const r = 15.5;
+  const cx = 21, cy = 21;
+  const circ = 2 * Math.PI * r;
+  const total = members.length;
+
+  // Build a concentric-arc donut using strokeDasharray, rotated progressively.
+  // Easier here: a single rotating stroke per slice using offset + dasharray.
+  let offset = 0;
+  const slices = rolesSorted.map(([role, count]) => {
+    const frac = count / total;
+    const len = frac * circ;
+    const slice = {
+      role, count, frac, len,
+      offset,
+      color: roleColor(role) || '#7C50C8',
+    };
+    offset += len;
+    return slice;
+  });
+
+  // Render slices: each is a <circle> with a dasharray gap ("len, circ")
+  // and a dashoffset that positions its start. Leaflet-style technique.
+  const slicesSvg = slices.map(s => {
+    const gap = circ - s.len;
+    // Small gap between slices for visibility (only if >1 role)
+    const gapBetween = slices.length > 1 ? 0.8 : 0;
+    const visibleLen = Math.max(s.len - gapBetween, 0.01);
+    return `<circle
+      cx="${cx}" cy="${cy}" r="${r}"
+      fill="none" stroke="${s.color}" stroke-width="5.5"
+      stroke-dasharray="${visibleLen} ${circ - visibleLen}"
+      stroke-dashoffset="${-s.offset}"
+      style="transition: stroke-dasharray 0.35s, stroke-dashoffset 0.35s;"
+    />`;
+  }).join('');
+  // Background track for tiny slices (visual polish)
+  svg.innerHTML = `
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f0eef8" stroke-width="5.5" class="donut-track"/>
+    ${slicesSvg}
+  `;
+
+  // Dark-mode track
+  const track = svg.querySelector('.donut-track');
+  if (track) track.style.stroke = document.body.classList.contains('dark') ? '#241c40' : '#f0eef8';
+
+  // Center text: largest role's share
+  const top = rolesSorted[0];
+  if (top && centerEl) {
+    const pct = Math.round((top[1] / total) * 100);
+    centerEl.textContent = `${pct}%`;
+  }
+
+  // Legend
+  if (legendEl) {
+    legendEl.innerHTML = rolesSorted.map(([role, count]) => `
+      <div class="donut-legend-row" onclick="donutLegendClick(event, '${role.replace(/'/g, "\\'")}')">
+        <span class="donut-legend-dot" style="background:${roleColor(role) || '#7C50C8'}"></span>
+        <span class="donut-legend-name">${role}</span>
+        <span class="donut-legend-count">${count}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function toggleDonutPopover(e) {
+  e.stopPropagation();
+  const pop = document.getElementById('donut-popover');
+  if (!pop) return;
+  pop.classList.toggle('visible');
+  if (pop.classList.contains('visible')) {
+    // Close on next outside click
+    const close = (ev) => {
+      if (pop.contains(ev.target)) return;
+      pop.classList.remove('visible');
+      document.removeEventListener('mousedown', close);
+    };
+    setTimeout(() => document.addEventListener('mousedown', close), 0);
+  }
+}
+
+function donutLegendClick(e, role) {
+  e.stopPropagation();
+  // Filter the list by this role (uses existing filter pill logic)
+  activeFilter.clear();
+  activeFilter.add(role);
+  renderFilterPills();
+  renderAll();
+  // Close popover
+  document.getElementById('donut-popover')?.classList.remove('visible');
+}
+
+// ── Team-growth sparkline: cumulative head-count by month ──
+function renderGrowthSparkline() {
+  const svg = document.getElementById('growth-sparkline-svg');
+  if (!svg) return;
+  const areaEl = svg.querySelector('.growth-area');
+  const lineEl = svg.querySelector('.growth-line');
+  const hoverDot = svg.querySelector('.growth-hover-dot');
+  const hoverLine = svg.querySelector('.growth-hover-line');
+  const tipEl = document.getElementById('growth-sparkline-tooltip');
+  const rangeEl = document.getElementById('growth-sparkline-range');
+  const container = document.getElementById('growth-sparkline');
+
+  // Parse join dates (m.year is "YYYY-MM" or "YYYY")
+  const stamps = members
+    .map(m => {
+      if (!m.year) return null;
+      const [y, mo] = m.year.split('-');
+      const yr = parseInt(y, 10);
+      const mn = parseInt(mo || '1', 10);
+      if (isNaN(yr)) return null;
+      return yr * 12 + (mn - 1); // months since year 0
+    })
+    .filter(n => n !== null)
+    .sort((a, b) => a - b);
+
+  if (stamps.length < 2) {
+    areaEl.setAttribute('d', '');
+    lineEl.setAttribute('d', '');
+    rangeEl.textContent = '';
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = '';
+
+  // Build monthly buckets from earliest stamp → now
+  const now = new Date();
+  const firstStamp = stamps[0];
+  const lastStamp  = now.getFullYear() * 12 + now.getMonth();
+  const numMonths  = lastStamp - firstStamp + 1;
+
+  // Cumulative count at end of each month
+  const counts = new Array(numMonths).fill(0);
+  let idx = 0;
+  for (let i = 0; i < numMonths; i++) {
+    const thisStamp = firstStamp + i;
+    while (idx < stamps.length && stamps[idx] <= thisStamp) idx++;
+    counts[i] = idx;
+  }
+
+  const W = 260, H = 34;
+  const pad = 2;
+  const maxCount = counts[counts.length - 1];
+  const step = (W - pad * 2) / Math.max(numMonths - 1, 1);
+
+  const points = counts.map((c, i) => {
+    const x = pad + i * step;
+    const y = H - pad - (c / maxCount) * (H - pad * 2);
+    return [x, y];
+  });
+
+  const linePath = points.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const areaPath = linePath + ` L${points[points.length - 1][0].toFixed(1)},${H} L${points[0][0].toFixed(1)},${H} Z`;
+  lineEl.setAttribute('d', linePath);
+  areaEl.setAttribute('d', areaPath);
+
+  // Range label
+  const fmtMonth = s => {
+    const y = Math.floor(s / 12), m = s % 12;
+    return new Date(y, m, 1).toLocaleString('en', { month: 'short', year: 'numeric' });
+  };
+  rangeEl.textContent = `${fmtMonth(firstStamp)} – ${fmtMonth(lastStamp)}`;
+
+  // Hover → show count at that month
+  const onMove = (evt) => {
+    const rect = svg.getBoundingClientRect();
+    const relX = (evt.clientX - rect.left) / rect.width * W;
+    let closest = 0, best = Infinity;
+    for (let i = 0; i < points.length; i++) {
+      const d = Math.abs(points[i][0] - relX);
+      if (d < best) { best = d; closest = i; }
+    }
+    const [cx, cy] = points[closest];
+    hoverDot.setAttribute('cx', cx);
+    hoverDot.setAttribute('cy', cy);
+    hoverLine.setAttribute('x1', cx);
+    hoverLine.setAttribute('x2', cx);
+    const stamp = firstStamp + closest;
+    tipEl.textContent = `${fmtMonth(stamp)} — ${counts[closest]} teammate${counts[closest] === 1 ? '' : 's'}`;
+  };
+  const onLeave = () => { tipEl.innerHTML = '&nbsp;'; };
+  container.onmousemove = onMove;
+  container.onmouseleave = onLeave;
+}
+
+// Rough time-zone estimate by bucketing longitudes into 15° slices
+// (1 hour of rotation). Good enough for a headline "N time zones" number.
+function estimateTimezones(list) {
+  const slices = new Set();
+  list.forEach(m => {
+    if (typeof m.lng !== 'number' || isNaN(m.lng)) return;
+    slices.add(Math.round(m.lng / 15));
+  });
+  return slices.size;
+}
+
+// ════════════════════════════════════════════════════════════
+// ANNIVERSARIES THIS MONTH
+// ════════════════════════════════════════════════════════════
+function isAnniversaryThisMonth(member) {
+  if (!member?.year) return false;
+  const s = String(member.year);
+  const [y, mm] = s.split('-');
+  const yN = parseInt(y); if (!yN || !mm) return false;
+  const mN = parseInt(mm) - 1;
+  const now = new Date();
+  return mN === now.getMonth() && yN < now.getFullYear();
+}
+
+function getAnniversariesThisMonth() {
+  const now = new Date();
+  const curMonth = now.getMonth(); // 0-11
+  const curYear  = now.getFullYear();
+  const anns = [];
+  const news = [];
+  members.forEach((m, i) => {
+    if (!m.year) return;
+    const s = String(m.year);
+    const [y, mm] = s.split('-');
+    const yN = parseInt(y); if (!yN) return;
+    const hasMonth = !!mm;
+
+    if (hasMonth) {
+      const mN = parseInt(mm) - 1;
+      const joinDate = new Date(yN, mN, 1);
+      const totalMonths = (curYear - yN) * 12 + (curMonth - mN);
+      // New hires: joined < 3 months ago
+      if (totalMonths >= 0 && totalMonths < 3) news.push(i);
+      // Anniversary: exact month match, >=1 year ago
+      if (mN === curMonth && yN < curYear) anns.push(i);
+    } else {
+      // Year-only data — we can't pinpoint the month, skip for precision
+    }
+  });
+  return { anniversaries: anns, newHires: news };
+}
+
+let annivFilterMode = null; // null | 'anniversaries' | 'new-hires'
+
+function updateAnnivBanner() {
+  const banner = document.getElementById('anniv-banner');
+  if (!banner) return;
+  const dismissKey = 'clutch-anniv-dismiss-' + new Date().toISOString().slice(0, 7);
+  if (localStorage.getItem(dismissKey) === '1') { banner.classList.remove('visible'); return; }
+
+  const { anniversaries, newHires } = getAnniversariesThisMonth();
+  const ac = anniversaries.length;
+  const nc = newHires.length;
+
+  if (ac === 0 && nc === 0) { banner.classList.remove('visible'); return; }
+
+  document.getElementById('anniv-count-ann').textContent = ac;
+  document.getElementById('anniv-count-new').textContent = nc;
+  document.getElementById('anniv-label-ann').textContent =
+    ac === 1 ? 'Anniversary this month' : 'Anniversaries this month';
+  document.getElementById('anniv-label-new').textContent =
+    nc === 1 ? 'New hire' : 'New hires';
+
+  document.getElementById('anniv-chip-ann').style.display = ac > 0 ? 'flex' : 'none';
+  document.getElementById('anniv-chip-new').style.display = nc > 0 ? 'flex' : 'none';
+
+  document.getElementById('anniv-chip-ann').classList.toggle('active', annivFilterMode === 'anniversaries');
+  document.getElementById('anniv-chip-new').classList.toggle('active', annivFilterMode === 'new-hires');
+
+  banner.classList.add('visible');
+}
+
+function onAnnivChipClick(mode) {
+  // Toggle off if the same chip is clicked again
+  if (annivFilterMode === mode) {
+    annivFilterMode = null;
+    updateAnnivBanner();
+    renderListFiltered();
+    return;
+  }
+  annivFilterMode = mode;
+  updateAnnivBanner();
+  renderListFiltered();
+}
+
+function dismissAnnivBanner(e) {
+  if (e) e.stopPropagation();
+  const dismissKey = 'clutch-anniv-dismiss-' + new Date().toISOString().slice(0, 7);
+  localStorage.setItem(dismissKey, '1');
+  document.getElementById('anniv-banner').classList.remove('visible');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1816,7 +4217,102 @@ function closeOnOverlay(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    // Priority: close shortcuts → close flight → close modal → clear kb focus → clear filters
+    const sc = document.getElementById('shortcuts-overlay');
+    if (sc && sc.classList.contains('open')) { toggleShortcutsOverlay(false); return; }
+    const fl = document.getElementById('flight-overlay');
+    if (fl && fl.classList.contains('open')) { closeFlightItinerary(); return; }
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay && overlay.classList.contains('open')) { closeModal(); return; }
+    if (kbFocusIndex !== null) {
+      setKbFocus(null);
+      return;
+    }
+    if (typeof countActiveFilters === 'function' && countActiveFilters() > 0) {
+      clearAllFilters();
+    }
+    return;
+  }
+  const tag = document.activeElement?.tagName;
+  const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(tag);
+
+  // "/" focuses search (Github-style) — ignore if user is already typing
+  if (e.key === '/' && !inField) {
+    const s = document.getElementById('search-input');
+    if (s) { e.preventDefault(); s.focus(); s.select(); }
+    return;
+  }
+  // "?" or Shift+/ → open shortcuts overlay
+  if (e.key === '?' && !inField) {
+    e.preventDefault();
+    toggleShortcutsOverlay(true);
+    return;
+  }
+  // "r" → roll the random teammate die (when not typing)
+  if ((e.key === 'r' || e.key === 'R') && !inField && !e.metaKey && !e.ctrlKey) {
+    e.preventDefault();
+    if (typeof pickRandomTeammate === 'function') pickRandomTeammate();
+    return;
+  }
+  // "d" → toggle dark mode
+  if ((e.key === 'd' || e.key === 'D') && !inField && !e.metaKey && !e.ctrlKey) {
+    e.preventDefault();
+    if (typeof toggleTheme === 'function') toggleTheme();
+    return;
+  }
+  // "f" → build a flight itinerary from a random pair
+  if ((e.key === 'f' || e.key === 'F') && !inField && !e.metaKey && !e.ctrlKey) {
+    e.preventDefault();
+    if (typeof openFlightItinerary === 'function') openFlightItinerary();
+    return;
+  }
+  // ↑/↓ navigate list, Enter flies to the focused person
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
+    // Don't hijack arrows when typing in an input/select (except Enter from search = select top)
+    const tag = document.activeElement?.tagName;
+    const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(tag);
+    if (inField && e.key !== 'Enter') return;
+    if (inField && e.key === 'Enter' && document.activeElement?.id !== 'search-input') return;
+
+    const rows = [...document.querySelectorAll('.member-item[data-index]')];
+    if (!rows.length) return;
+
+    if (e.key === 'Enter') {
+      const focusRow = rows.find(r => +r.dataset.index === kbFocusIndex) || rows[0];
+      const i = +focusRow.dataset.index;
+      e.preventDefault();
+      if (document.activeElement?.id === 'search-input') document.activeElement.blur();
+      setActive(i);
+      return;
+    }
+
+    e.preventDefault();
+    const curVisibleIdx = rows.findIndex(r => +r.dataset.index === kbFocusIndex);
+    let nextVisibleIdx;
+    if (curVisibleIdx === -1) {
+      nextVisibleIdx = e.key === 'ArrowDown' ? 0 : rows.length - 1;
+    } else {
+      nextVisibleIdx = curVisibleIdx + (e.key === 'ArrowDown' ? 1 : -1);
+      nextVisibleIdx = Math.max(0, Math.min(rows.length - 1, nextVisibleIdx));
+    }
+    const nextI = +rows[nextVisibleIdx].dataset.index;
+    setKbFocus(nextI);
+    rows[nextVisibleIdx].scrollIntoView({ block: 'nearest' });
+  }
+});
+
+// ── Keyboard focus state (separate from "active" which implies flyTo) ──
+let kbFocusIndex = null;
+function setKbFocus(i) {
+  document.querySelectorAll('.member-item.kb-focus').forEach(r => r.classList.remove('kb-focus'));
+  kbFocusIndex = i;
+  if (i !== null) {
+    const row = document.querySelector(`.member-item[data-index="${i}"]`);
+    if (row) row.classList.add('kb-focus');
+  }
+}
 
 function resetForm() {
   ['f-email','f-name','f-city','f-year','f-month','f-slack','f-linkedin'].forEach(id => {
@@ -2225,17 +4721,25 @@ function fitMapToFilter() {
 let activeYear    = 'all';
 let activeCountry = 'all';
 
-function memberCountry(m) {
-  const parts = m.city.split(',');
-  return parts[parts.length - 1].trim();
-}
-
 let activeSort = 'default';
 
 function onSortChange() {
   activeSort = document.getElementById('sort-select').value;
-  document.getElementById('sort-select').className = activeSort !== 'default' ? 'sorted' : '';
+  // 'default' (Recently added) is the natural state — no "sorted" badge
+  document.getElementById('sort-select').className =
+    (activeSort !== 'default') ? 'sorted' : '';
   renderListFiltered();
+}
+
+// Heuristic for "when was this teammate added to the map":
+// prefer updatedAt (set when they self-edit), fall back to their join date,
+// then to their index in the source array (earlier indices = added earlier).
+function memberAddedTs(m) {
+  // Sheet row order = true "added" order. Stable across edits; `updatedAt`
+  // changes every time the row is touched so it's unreliable as an "added"
+  // indicator. Fall back to array index for seeds / newly-added (no sheet seq yet).
+  if (typeof m._sheetSeq === 'number') return m._sheetSeq;
+  return members.indexOf(m);
 }
 
 function getFilteredList() {
@@ -2243,6 +4747,11 @@ function getFilteredList() {
   let list = activeFilter.size === 0 ? members : members.filter(m => activeFilter.has(m.role));
   if (activeYear    !== 'all') list = list.filter(m => String(extractYear(m.year)) === activeYear);
   if (activeCountry !== 'all') list = list.filter(m => memberCountry(m) === activeCountry);
+  if (annivFilterMode) {
+    const { anniversaries, newHires } = getAnniversariesThisMonth();
+    const idxSet = new Set(annivFilterMode === 'anniversaries' ? anniversaries : newHires);
+    list = list.filter(m => idxSet.has(members.indexOf(m)));
+  }
   if (q) list = list.filter(m =>
     m.name.toLowerCase().includes(q) ||
     m.role.toLowerCase().includes(q) ||
@@ -2251,7 +4760,13 @@ function getFilteredList() {
 
   // Sort
   list = [...list]; // don't mutate original array
-  if (activeSort === 'name-az') {
+  if (activeSort === 'default') {
+    // Earliest added first (founders / OGs at top)
+    list.sort((a, b) => memberAddedTs(a) - memberAddedTs(b));
+  } else if (activeSort === 'added-desc') {
+    // Recently added first
+    list.sort((a, b) => memberAddedTs(b) - memberAddedTs(a));
+  } else if (activeSort === 'name-az') {
     list.sort((a, b) => a.name.localeCompare(b.name));
   } else if (activeSort === 'city-az') {
     list.sort((a, b) => a.city.localeCompare(b.city));
@@ -2286,6 +4801,158 @@ function renderListFiltered() {
   }
   renderList(getFilteredList());
   renderMapMarkers();
+  updateActiveFiltersBar();
+}
+
+// ════════════════════════════════════════════════════════════
+// ACTIVE FILTERS BAR — one-click clear of everything
+// ════════════════════════════════════════════════════════════
+function countActiveFilters() {
+  let n = 0;
+  if (activeFilter && activeFilter.size > 0) n += activeFilter.size;
+  if (activeYear && activeYear !== 'all') n++;
+  if (activeCountry && activeCountry !== 'all') n++;
+  if (annivFilterMode) n++;
+  if (clusterView !== null) n++;
+  const q = document.getElementById('search-input');
+  if (q && q.value.trim()) n++;
+  if (activeSort && activeSort !== 'default') n++;
+  return n;
+}
+
+function describeActiveFilters() {
+  const parts = [];
+  if (activeFilter && activeFilter.size > 0) parts.push([...activeFilter].join(', '));
+  if (annivFilterMode === 'anniversaries') parts.push('🎉 Anniversaries');
+  if (annivFilterMode === 'new-hires')     parts.push('🌱 New hires');
+  if (activeYear && activeYear !== 'all')       parts.push(`Year ${activeYear}`);
+  if (activeCountry && activeCountry !== 'all') parts.push(activeCountry);
+  if (clusterView !== null) parts.push(`📍 ${clusterView.length} pinned`);
+  const q = document.getElementById('search-input')?.value.trim();
+  if (q) parts.push(`"${q}"`);
+  return parts.join(' · ');
+}
+
+function updateActiveFiltersBar() {
+  const bar = document.getElementById('active-filters-bar');
+  if (!bar) return;
+  const n = countActiveFilters();
+
+  // Sync filter state into the URL so links are shareable
+  syncUrlState();
+
+  // Show/hide the share button based on whether there are filters to share
+  const shareBtn = document.getElementById('share-filters-btn');
+  if (shareBtn) shareBtn.style.display = n > 0 ? '' : 'none';
+
+  if (n === 0) { bar.classList.remove('visible'); return; }
+  const desc = describeActiveFilters();
+  document.getElementById('afb-count').textContent = n;
+  document.getElementById('afb-text').textContent  = desc ? ' · ' + desc : (n === 1 ? 'filter active' : 'filters active');
+  bar.classList.add('visible');
+}
+
+// ════════════════════════════════════════════════════════════
+// SHAREABLE FILTER URL
+// ════════════════════════════════════════════════════════════
+let _urlSyncLock = false; // prevents loops while we apply URL state on load
+
+function syncUrlState() {
+  if (_urlSyncLock) return;
+  const p = new URLSearchParams();
+  if (activeFilter && activeFilter.size > 0) p.set('roles', [...activeFilter].join(','));
+  if (activeYear && activeYear !== 'all') p.set('year', activeYear);
+  if (activeCountry && activeCountry !== 'all') p.set('country', activeCountry);
+  if (annivFilterMode) p.set('anniv', annivFilterMode);
+  if (activeSort && activeSort !== 'default') p.set('sort', activeSort);
+  const q = document.getElementById('search-input');
+  if (q && q.value.trim()) p.set('q', q.value.trim());
+  const str = p.toString();
+  const newUrl = location.pathname + (str ? '?' + str : '') + location.hash;
+  try { history.replaceState(null, '', newUrl); } catch (_) {}
+}
+
+function applyUrlState() {
+  const p = new URLSearchParams(location.search);
+  if (!p.toString()) return;
+  _urlSyncLock = true;
+  try {
+    const roles = p.get('roles');
+    if (roles) {
+      activeFilter = activeFilter || new Set();
+      activeFilter.clear();
+      roles.split(',').filter(Boolean).forEach(r => activeFilter.add(r));
+    }
+    const year = p.get('year');
+    if (year) activeYear = year;
+    const country = p.get('country');
+    if (country) activeCountry = country;
+    const anniv = p.get('anniv');
+    if (anniv === 'anniversaries' || anniv === 'new-hires') annivFilterMode = anniv;
+    const sort = p.get('sort');
+    if (sort) activeSort = sort;
+    const q = p.get('q');
+    if (q) {
+      const s = document.getElementById('search-input');
+      if (s) s.value = q;
+    }
+    // Reflect into UI controls where present
+    const ys = document.getElementById('filter-year');    if (ys && year) ys.value = year;
+    const cs = document.getElementById('filter-country'); if (cs && country) cs.value = country;
+    const ss = document.getElementById('sort-select');    if (ss && sort) ss.value = sort;
+    const chipA = document.getElementById('anniv-chip-ann');
+    const chipN = document.getElementById('anniv-chip-new');
+    if (chipA) chipA.classList.toggle('active', annivFilterMode === 'anniversaries');
+    if (chipN) chipN.classList.toggle('active', annivFilterMode === 'new-hires');
+  } finally {
+    _urlSyncLock = false;
+  }
+}
+
+async function copyShareUrl(btn) {
+  // Force a fresh sync just in case
+  syncUrlState();
+  const url = location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch (_) {
+    // Fallback for browsers blocking clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.top = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (__) {}
+    document.body.removeChild(ta);
+  }
+  if (btn) {
+    const prev = btn.innerHTML;
+    btn.innerHTML = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = prev; btn.classList.remove('copied'); }, 1400);
+  }
+}
+
+function clearAllFilters() {
+  if (activeFilter) activeFilter.clear();
+  activeYear    = 'all';
+  activeCountry = 'all';
+  annivFilterMode = null;
+  activeSort = 'default';
+  const q = document.getElementById('search-input');  if (q) q.value = '';
+  const ys = document.getElementById('filter-year');  if (ys) ys.value = 'all';
+  const cs = document.getElementById('filter-country'); if (cs) cs.value = 'all';
+  const ss = document.getElementById('sort-select');  if (ss) { ss.value = 'default'; ss.className = ''; }
+  // Clear cluster view if active
+  clusterView = null;
+  const cvBanner = document.getElementById('cluster-view-banner');
+  if (cvBanner) cvBanner.classList.remove('visible');
+  // Re-render everything
+  renderFilterPills();
+  renderSecondaryFilters();
+  updateAnnivBanner();
+  renderList(getFilteredList());
+  renderMapMarkers();
+  updateActiveFiltersBar();
+  showToast('Filters cleared');
 }
 
 function renderSecondaryFilters() {
@@ -2516,13 +5183,192 @@ function showToast(msg) {
 // Columns: A name | B role | C city | D year | E lat | F lng |
 //          G photo | H email | I updatedAt | J slack | K linkedin | L archived
 // ════════════════════════════════════════════════════════════
+
+// Metro-area normalization — collapses suburbs and near-in neighborhoods
+// into the metro they belong to. Sheet row stays untouched; this only shapes
+// the in-memory `city` string used for clustering, the spotlight card, and
+// list grouping. Keep entries lowercase; matching is case-insensitive.
+//
+// Heuristic: if the raw city (first comma-part) matches an alias, swap to
+// the metro label. If nothing matches, leave the city as-is.
+const METRO_ALIASES = {
+  // ── NYC / North Jersey metro ──
+  'nyc metro': [
+    // NYC boroughs
+    'new york', 'new york city', 'nyc', 'manhattan',
+    'brooklyn', 'queens', 'bronx', 'the bronx', 'staten island',
+    'long island city', 'astoria', 'flushing', 'harlem',
+    // Northern NJ commuter belt
+    'jersey city', 'newark', 'hoboken', 'weehawken', 'union city',
+    'bayonne', 'fort lee', 'edgewater', 'west new york', 'north bergen',
+    'secaucus', 'kearny', 'harrison', 'paterson', 'passaic', 'clifton',
+    'elizabeth', 'bloomfield', 'montclair', 'glen ridge', 'nutley',
+    // Lower Westchester / Long Island inner ring
+    'yonkers', 'white plains', 'new rochelle', 'mount vernon',
+  ],
+  // ── Boston / Cambridge metro ──
+  'boston metro': [
+    'boston', 'cambridge', 'somerville', 'brookline', 'newton',
+    'medford', 'malden', 'quincy', 'watertown', 'arlington ma',
+    'chelsea', 'everton', 'everett', 'revere', 'waltham',
+  ],
+  // ── SF Bay Area ──
+  // Wide radius — covers the peninsula, East Bay (Contra Costa), Marin,
+  // and the southern tri-valley. If anyone commutes into SF from the greater
+  // Bay, they roll up here.
+  'sf bay area': [
+    'san francisco', 'sf', 'oakland', 'berkeley', 'alameda', 'emeryville',
+    'palo alto', 'mountain view', 'sunnyvale', 'san jose', 'santa clara',
+    'menlo park', 'redwood city', 'san mateo', 'burlingame', 'daly city',
+    'south san francisco', 'fremont', 'hayward', 'san leandro', 'cupertino',
+    'los altos', 'los altos hills', 'foster city', 'belmont', 'milpitas',
+    // East Bay / Contra Costa / Tri-Valley
+    'san ramon', 'orinda', 'martinez', 'walnut creek', 'concord',
+    'lafayette', 'pleasant hill', 'dublin', 'pleasanton', 'livermore',
+    'danville', 'alamo', 'castro valley', 'san pablo', 'richmond ca',
+    'albany ca', 'el cerrito', 'pinole', 'antioch', 'brentwood ca',
+    'pittsburg ca',
+    // Marin
+    'tiburon', 'sausalito', 'mill valley', 'larkspur', 'corte madera',
+    'san rafael', 'novato',
+    // Southern Peninsula + South Bay
+    'campbell', 'saratoga', 'los gatos', 'morgan hill', 'gilroy',
+    'union city', 'newark ca', 'half moon bay', 'pacifica',
+  ],
+  // ── LA metro ──
+  // Wide radius — covers LA County, the Valley, and Orange County. "Greater
+  // LA" is sprawling; if someone's in the rush-hour catchment, they roll up.
+  'la metro': [
+    'los angeles', 'la', 'santa monica', 'beverly hills', 'burbank',
+    'pasadena', 'glendale', 'long beach', 'culver city', 'west hollywood',
+    'hollywood', 'venice', 'marina del rey', 'manhattan beach',
+    'hermosa beach', 'redondo beach', 'torrance', 'el segundo',
+    'inglewood', 'sherman oaks', 'studio city', 'north hollywood',
+    // San Fernando Valley + north
+    'thousand oaks', 'calabasas', 'agoura hills', 'westlake village',
+    'woodland hills', 'encino', 'tarzana', 'van nuys', 'canoga park',
+    'northridge', 'simi valley', 'santa clarita', 'valencia', 'palmdale',
+    'lancaster', 'reseda', 'chatsworth', 'porter ranch',
+    // San Gabriel Valley / eastern LA County
+    'alhambra', 'monterey park', 'arcadia', 'monrovia', 'south pasadena',
+    'montebello', 'whittier', 'pomona', 'claremont', 'glendora', 'azusa',
+    'covina', 'west covina', 'rowland heights', 'hacienda heights',
+    // Orange County
+    'anaheim', 'irvine', 'santa ana', 'huntington beach', 'newport beach',
+    'costa mesa', 'fullerton', 'orange', 'tustin', 'laguna beach',
+    'laguna niguel', 'mission viejo', 'yorba linda', 'brea', 'garden grove',
+    'westminster', 'fountain valley', 'seal beach', 'dana point',
+    'san clemente', 'aliso viejo', 'lake forest', 'rancho santa margarita',
+  ],
+  // ── San Diego metro ──
+  'san diego metro': [
+    'san diego', 'la jolla', 'chula vista', 'escondido', 'carlsbad',
+    'oceanside', 'encinitas', 'del mar', 'coronado', 'national city',
+    'el cajon', 'poway', 'san marcos', 'vista',
+  ],
+  // ── Washington D.C. metro ──
+  'dc metro': [
+    'washington', 'washington d.c.', 'washington dc', 'd.c.', 'dc',
+    'arlington va', 'arlington', 'alexandria', 'bethesda', 'silver spring',
+    'rockville', 'fairfax', 'mclean', 'reston', 'falls church',
+    'tysons', 'tysons corner', 'chevy chase',
+  ],
+  // ── Chicago metro ──
+  'chicago metro': [
+    'chicago', 'evanston', 'oak park', 'cicero', 'skokie', 'naperville',
+    'schaumburg', 'arlington heights',
+  ],
+  // ── Seattle metro ──
+  'seattle metro': [
+    'seattle', 'bellevue', 'redmond', 'kirkland', 'renton', 'tacoma',
+    'everett wa', 'issaquah', 'sammamish',
+  ],
+  // ── Toronto GTA ──
+  'gta': [
+    'toronto', 'mississauga', 'brampton', 'markham', 'vaughan',
+    'scarborough', 'etobicoke', 'north york', 'richmond hill',
+    'oakville', 'burlington on',
+  ],
+  // ── Miami metro ──
+  'miami metro': [
+    'miami', 'miami beach', 'coral gables', 'fort lauderdale',
+    'hollywood fl', 'aventura', 'doral', 'hialeah',
+  ],
+  // ── Dallas–Fort Worth ──
+  'dfw metro': [
+    'dallas', 'fort worth', 'arlington tx', 'plano', 'irving',
+    'frisco', 'richardson', 'mckinney', 'garland',
+  ],
+  // ── Atlanta metro ──
+  'atlanta metro': [
+    'atlanta', 'decatur', 'marietta', 'sandy springs', 'alpharetta',
+    'smyrna', 'roswell',
+  ],
+};
+
+// Reverse index: raw-alias → metro key.
+const _METRO_LOOKUP = (() => {
+  const map = new Map();
+  for (const [metro, aliases] of Object.entries(METRO_ALIASES)) {
+    for (const a of aliases) map.set(a.toLowerCase().trim(), metro);
+  }
+  return map;
+})();
+
+// Pretty display labels for each metro key.
+const METRO_LABELS = {
+  'nyc metro':      'NYC / NJ Metro Area',
+  'boston metro':   'Boston Area',
+  'sf bay area':    'SF Bay Area',
+  'la metro':       'Los Angeles Area',
+  'san diego metro':'San Diego Area',
+  'dc metro':       'Washington, D.C. Area',
+  'chicago metro':  'Chicago Area',
+  'seattle metro':  'Seattle Area',
+  'gta':            'Greater Toronto Area',
+  'miami metro':    'Miami Area',
+  'dfw metro':      'Dallas–Fort Worth',
+  'atlanta metro':  'Atlanta Area',
+};
+
+// Metro country tags (used when rewriting the city string's country half).
+const METRO_COUNTRY = {
+  'gta': 'Canada',
+  'boston metro':  'United States',
+  'nyc metro':     'United States',
+  'sf bay area':   'United States',
+  'la metro':      'United States',
+  'san diego metro': 'United States',
+  'dc metro':      'United States',
+  'chicago metro': 'United States',
+  'seattle metro': 'United States',
+  'miami metro':   'United States',
+  'dfw metro':     'United States',
+  'atlanta metro': 'United States',
+};
+
+function normalizeCity(raw) {
+  if (!raw) return raw;
+  // Split "City, Country" or "City, State, Country" — we key off the first part.
+  const parts = raw.split(',').map(s => s.trim());
+  const firstPart = parts[0].toLowerCase();
+  // Strip state suffixes like " ma", " va" only when disambiguating — we already
+  // encoded those where ambiguous (e.g. "arlington va" vs "arlington tx") in the
+  // alias lists.
+  const key = _METRO_LOOKUP.get(firstPart);
+  if (!key) return raw;
+  const label = METRO_LABELS[key] || parts[0];
+  const country = METRO_COUNTRY[key] || parts[parts.length - 1] || '';
+  return country ? `${label}, ${country}` : label;
+}
+
 async function loadFromSheets() {
   if (!CONFIG.SHEET_CSV_URL) return;
   try {
     const res  = await fetch(CONFIG.SHEET_CSV_URL);
     const csv  = await res.text();
     const rows = csv.trim().split('\n').slice(1); // skip header row
-    const loaded = rows.map(row => {
+    const loaded = rows.map((row, rowIdx) => {
       // Proper CSV parser — handles quoted fields containing commas (e.g. "Orlando, United States")
       const cols = [];
       let cur = '', inQ = false;
@@ -2535,7 +5381,7 @@ async function loadFromSheets() {
       return {
         name:      cols[0] || '',
         role:      cols[1] || '',
-        city:      cols[2] || '',
+        city:      normalizeCity(cols[2] || ''),
         year:      cols[3] || '',
         lat:       parseFloat(cols[4]) || 0,
         lng:       parseFloat(cols[5]) || 0,
@@ -2545,12 +5391,20 @@ async function loadFromSheets() {
         slack:     cols[9]  || '',
         linkedin:  cols[10] || '',
         archived:  (cols[11] || '').toLowerCase() === 'true',
+        // Sheet row order = the order this person was added to Clutch.
+        // Stable across edits — `updatedAt` can change, this cannot.
+        _sheetSeq: rowIdx,
       };
     }).filter(m => m.name && m.lat && m.lng && !m.archived);
     if (loaded.length) {
       // Merge: sheet data wins; keep any seeds whose name isn't in the sheet
       const sheetNames = new Set(loaded.map(m => m.name.toLowerCase()));
       const seeds = members.filter(m => !sheetNames.has(m.name.toLowerCase()));
+      // Normalize seed city strings too — co-founders shouldn't escape the
+      // metro consolidation just because they were hardcoded.
+      seeds.forEach(s => { s.city = normalizeCity(s.city); });
+      // Seeds (co-founders) come before sheet rows — give them negative seqs
+      seeds.forEach((s, i) => { s._sheetSeq = -1000 + i; });
       members = [...seeds, ...loaded];
     }
   } catch (e) {
@@ -2559,21 +5413,83 @@ async function loadFromSheets() {
 }
 
 // ════════════════════════════════════════════════════════════
-// MOBILE SIDEBAR
+// MOBILE SIDEBAR — 3-state drawer: peek → half → full
 // ════════════════════════════════════════════════════════════
-function toggleMobileSidebar() {
+const DRAWER_STATES = ['peek', 'half', 'full'];
+const DRAWER_LABELS = { peek: 'Team directory · tap to expand', half: 'Drag to expand', full: 'Tap to close' };
+
+function setDrawerState(state) {
   const sb = document.getElementById('sidebar');
-  const open = sb.classList.toggle('mobile-open');
-  document.getElementById('handle-label').textContent = open ? 'Close' : 'Team directory';
+  sb.classList.remove('mobile-half', 'mobile-full', 'mobile-open');
+  if (state === 'half') sb.classList.add('mobile-half');
+  else if (state === 'full') sb.classList.add('mobile-full');
+  const label = document.getElementById('handle-label');
+  if (label) label.textContent = DRAWER_LABELS[state] || 'Team directory';
+  sb.setAttribute('data-drawer', state);
 }
 
-// Also open sidebar when a list item is tapped on mobile
+function currentDrawerState() {
+  const sb = document.getElementById('sidebar');
+  if (sb.classList.contains('mobile-full') || sb.classList.contains('mobile-open')) return 'full';
+  if (sb.classList.contains('mobile-half')) return 'half';
+  return 'peek';
+}
+
+function cycleMobileSidebar() {
+  const cur = currentDrawerState();
+  const next = cur === 'peek' ? 'half' : cur === 'half' ? 'full' : 'peek';
+  setDrawerState(next);
+}
+
+// Back-compat shim (used by some call sites)
+function toggleMobileSidebar() { cycleMobileSidebar(); }
+
+// Pin tapped / card tapped → auto-expand to HALF (not full, so user still sees map)
 function maybeOpenMobileSidebar() {
-  if (window.innerWidth <= 768) {
-    document.getElementById('sidebar').classList.add('mobile-open');
-    document.getElementById('handle-label').textContent = 'Close';
+  if (window.innerWidth <= 768 && currentDrawerState() === 'peek') {
+    setDrawerState('half');
   }
 }
+
+// ── Touch-drag support on the drawer handle for snap points ──
+(function setupDrawerDrag() {
+  let startY = null, startState = null, sbEl = null;
+  function onStart(e) {
+    if (window.innerWidth > 768) return;
+    sbEl = document.getElementById('sidebar');
+    const t = e.touches ? e.touches[0] : e;
+    startY = t.clientY;
+    startState = currentDrawerState();
+    sbEl.style.transition = 'none';
+  }
+  function onMove(e) {
+    if (startY === null) return;
+    // We let CSS handle position — only track for snap decision on release.
+    // (A full FLIP implementation would be heavier; snap-on-release feels good enough.)
+  }
+  function onEnd(e) {
+    if (startY === null || !sbEl) return;
+    const t = (e.changedTouches && e.changedTouches[0]) || e;
+    const dy = t.clientY - startY;
+    sbEl.style.transition = '';
+    const threshold = 40;
+    let next = startState;
+    if (dy < -threshold) {
+      next = startState === 'peek' ? 'half' : 'full';
+    } else if (dy > threshold) {
+      next = startState === 'full' ? 'half' : 'peek';
+    }
+    setDrawerState(next);
+    startY = null; startState = null; sbEl = null;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const handle = document.querySelector('.sidebar-handle');
+    if (!handle) return;
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove',  onMove,  { passive: true });
+    handle.addEventListener('touchend',   onEnd);
+  });
+})();
 
 // ════════════════════════════════════════════════════════════
 // ONBOARDING TOUR
@@ -2605,6 +5521,424 @@ const TOUR_STEPS = [
 ];
 
 let tourStep = 0;
+
+// ════════════════════════════════════════════════════════════
+// SHORTCUTS OVERLAY
+// ════════════════════════════════════════════════════════════
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toggleShortcutsOverlay(show) {
+  const o = document.getElementById('shortcuts-overlay');
+  if (!o) return;
+  if (show === undefined) show = !o.classList.contains('open');
+  o.classList.toggle('open', show);
+}
+function openShortcuts() { toggleShortcutsOverlay(true); }
+function closeShortcuts() { toggleShortcutsOverlay(false); }
+
+// ════════════════════════════════════════════════════════════
+// FLIGHT ITINERARY
+// ════════════════════════════════════════════════════════════
+let flightLine = null;
+
+function _flightPinned() {
+  return members
+    .map((m, i) => ({ m, i }))
+    .filter(({ m }) => m.lat && m.lng);
+}
+// ── Flight combobox state ──
+// Index into members[] for each picker; null = nothing selected yet.
+let flightFromIdx = null;
+let flightToIdx = null;
+// Which list item is keyboard-highlighted (by data-idx)
+let _flightKbHl = { from: null, to: null };
+
+function _flightComboEls(role) {
+  return {
+    combo: document.getElementById(`flight-${role}-combo`),
+    input: document.getElementById(`flight-${role}-input`),
+    list: document.querySelector(`#flight-${role}-combo .flight-combo-list`),
+    clear: document.querySelector(`#flight-${role}-combo .flight-combo-clear`),
+  };
+}
+
+function _flightCurrentIdx(role) {
+  return role === 'from' ? flightFromIdx : flightToIdx;
+}
+function _flightSetIdx(role, idx) {
+  if (role === 'from') flightFromIdx = idx; else flightToIdx = idx;
+}
+
+function _flightComboLabel(idx) {
+  const m = members[idx];
+  if (!m) return '';
+  return `${m.name} — ${(m.city || '').split(',')[0]}`;
+}
+
+// Render the filtered dropdown list for a given role, based on current input text.
+function _flightRenderList(role) {
+  const { input, list, combo } = _flightComboEls(role);
+  if (!input || !list) return;
+  const q = input.value.trim().toLowerCase();
+  const otherIdx = role === 'from' ? flightToIdx : flightFromIdx;
+  const pinned = _flightPinned();
+
+  const matches = pinned.filter(({ m }) => {
+    if (!q) return true;
+    const hay = `${m.name} ${m.city || ''} ${m.role || ''} ${m.country || ''}`.toLowerCase();
+    return hay.includes(q);
+  });
+
+  if (!matches.length) {
+    list.innerHTML = '<div class="flight-combo-empty">No teammates match</div>';
+    _flightKbHl[role] = null;
+    return;
+  }
+
+  list.innerHTML = matches.map(({ m, i }) => {
+    const isOther = i === otherIdx;
+    const city = (m.city || '').split(',')[0];
+    return `<div class="flight-combo-item${isOther ? ' disabled' : ''}" data-idx="${i}" role="option" ${isOther ? 'aria-disabled="true" title="Already selected on the other side"' : ''}>
+      <span>${escapeHtml(m.name)}</span>
+      <span class="fc-city">${escapeHtml(city)}</span>
+    </div>`;
+  }).join('');
+
+  // Default keyboard highlight: current selection if still visible, else first enabled
+  const cur = _flightCurrentIdx(role);
+  let hl = matches.find(({ i }) => i === cur && i !== otherIdx)?.i;
+  if (hl == null) hl = matches.find(({ i }) => i !== otherIdx)?.i;
+  _flightKbHl[role] = hl ?? null;
+  _flightUpdateKbHl(role);
+}
+
+function _flightUpdateKbHl(role) {
+  const { list } = _flightComboEls(role);
+  if (!list) return;
+  const hl = _flightKbHl[role];
+  list.querySelectorAll('.flight-combo-item').forEach(el => {
+    el.classList.toggle('kb-hl', Number(el.dataset.idx) === hl);
+  });
+  // Scroll highlighted into view
+  const active = list.querySelector('.flight-combo-item.kb-hl');
+  if (active) {
+    const r = active.getBoundingClientRect();
+    const lr = list.getBoundingClientRect();
+    if (r.top < lr.top) list.scrollTop -= (lr.top - r.top) + 4;
+    else if (r.bottom > lr.bottom) list.scrollTop += (r.bottom - lr.bottom) + 4;
+  }
+}
+
+function _flightPickItem(role, idx) {
+  if (idx == null) return;
+  const otherIdx = role === 'from' ? flightToIdx : flightFromIdx;
+  if (idx === otherIdx) return; // can't pick the same person on both sides
+  _flightSetIdx(role, idx);
+  const { input, combo } = _flightComboEls(role);
+  input.value = _flightComboLabel(idx);
+  combo.classList.add('has-value');
+  combo.classList.remove('open');
+  updateFlight();
+}
+
+function _flightOpenList(role) {
+  const { combo, input } = _flightComboEls(role);
+  // When opening, show unfiltered list (input text may be a full selected label
+  // which would filter to just itself — clear it visually but remember the selection).
+  const cur = _flightCurrentIdx(role);
+  if (cur != null && input.value === _flightComboLabel(cur)) {
+    input.dataset.wasSelected = '1';
+    input.value = '';
+  }
+  combo.classList.add('open');
+  _flightRenderList(role);
+}
+
+function _flightCloseList(role, restoreLabel = true) {
+  const { combo, input } = _flightComboEls(role);
+  combo.classList.remove('open');
+  if (restoreLabel) {
+    const cur = _flightCurrentIdx(role);
+    if (cur != null) input.value = _flightComboLabel(cur);
+    else input.value = '';
+  }
+  delete input.dataset.wasSelected;
+}
+
+function _flightWireCombo(role) {
+  const { combo, input, list, clear } = _flightComboEls(role);
+  if (!combo || combo._wired) return;
+  combo._wired = true;
+
+  input.addEventListener('focus', () => _flightOpenList(role));
+  input.addEventListener('click', () => _flightOpenList(role));
+  input.addEventListener('input', () => {
+    combo.classList.add('open');
+    _flightRenderList(role);
+  });
+  input.addEventListener('keydown', (e) => {
+    const items = [...list.querySelectorAll('.flight-combo-item:not(.disabled)')];
+    if (!combo.classList.contains('open') && (e.key === 'ArrowDown' || e.key === 'Enter')) {
+      _flightOpenList(role);
+      e.preventDefault();
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!items.length) return;
+      const cur = _flightKbHl[role];
+      let idx = items.findIndex(el => Number(el.dataset.idx) === cur);
+      if (idx < 0) idx = 0;
+      else idx = (idx + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      _flightKbHl[role] = Number(items[idx].dataset.idx);
+      _flightUpdateKbHl(role);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (_flightKbHl[role] != null) _flightPickItem(role, _flightKbHl[role]);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      _flightCloseList(role, true);
+      input.blur();
+    }
+  });
+
+  list.addEventListener('mousedown', (e) => {
+    // mousedown (not click) to beat the input's blur
+    const item = e.target.closest('.flight-combo-item');
+    if (!item || item.classList.contains('disabled')) return;
+    e.preventDefault();
+    _flightPickItem(role, Number(item.dataset.idx));
+  });
+
+  clear.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    _flightSetIdx(role, null);
+    input.value = '';
+    combo.classList.remove('has-value');
+    _flightRenderList(role);
+    combo.classList.add('open');
+    input.focus();
+    updateFlight();
+  });
+
+  input.addEventListener('blur', () => {
+    // Delay so clicks on list items register first
+    setTimeout(() => {
+      if (document.activeElement === input) return;
+      _flightCloseList(role, true);
+    }, 120);
+  });
+}
+
+function _flightPinned() {
+  return members
+    .map((m, i) => ({ m, i }))
+    .filter(({ m }) => m.lat && m.lng);
+}
+
+// Reset/populate the combos. `preselect` may include { from: idx, to: idx }.
+function _flightPopulateSelects(preselect) {
+  const list = _flightPinned();
+  if (!list.length) return;
+
+  // Wire up listeners (idempotent)
+  _flightWireCombo('from');
+  _flightWireCombo('to');
+
+  // Decide new selection: preselect > previous (if still valid) > random.
+  const validIdxs = new Set(list.map(x => x.i));
+  let fromIdx = preselect?.from ?? (validIdxs.has(flightFromIdx) ? flightFromIdx : null);
+  let toIdx   = preselect?.to   ?? (validIdxs.has(flightToIdx)   ? flightToIdx   : null);
+
+  if (fromIdx == null || !validIdxs.has(fromIdx)) {
+    fromIdx = list[Math.floor(Math.random() * list.length)].i;
+  }
+  if (toIdx == null || !validIdxs.has(toIdx) || toIdx === fromIdx) {
+    let j = list[Math.floor(Math.random() * list.length)].i;
+    let guard = 0;
+    while (j === fromIdx && guard++ < 20) j = list[Math.floor(Math.random() * list.length)].i;
+    toIdx = j;
+  }
+
+  flightFromIdx = fromIdx;
+  flightToIdx   = toIdx;
+
+  // Paint both combos
+  for (const role of ['from', 'to']) {
+    const { combo, input } = _flightComboEls(role);
+    const idx = _flightCurrentIdx(role);
+    input.value = _flightComboLabel(idx);
+    combo.classList.toggle('has-value', idx != null);
+    combo.classList.remove('open');
+  }
+}
+
+function _haversineMiles(lat1, lon1, lat2, lon2) {
+  const R = 3958.8;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+// ════════════════════════════════════════════════════════════
+// TIMEZONE HELPERS — used by popup overlap strip AND flight tz diff.
+// We derive UTC offset from longitude (15° per hour). It's rough but
+// always works without a tz lookup table, and is accurate to within
+// ~1 hour for any city. Members don't carry a .tz field in the sheet.
+// ════════════════════════════════════════════════════════════
+function viewerUtcOffset() {
+  // getTimezoneOffset returns minutes WEST of UTC (positive) — invert it.
+  return -new Date().getTimezoneOffset() / 60;
+}
+function memberUtcOffset(m) {
+  if (typeof m.tz === 'number') return m.tz;
+  if (typeof m.lng === 'number') return Math.round(m.lng / 15);
+  return 0;
+}
+
+
+function updateFlight() {
+  const distEl = document.getElementById('flight-dist');
+  const timeEl = document.getElementById('flight-time');
+  const tzEl = document.getElementById('flight-tz');
+  const itin = document.getElementById('flight-itin');
+  if (flightFromIdx == null || flightToIdx == null) {
+    if (distEl) distEl.textContent = '—';
+    if (timeEl) timeEl.textContent = '—';
+    if (tzEl) tzEl.textContent = '—';
+    if (itin) itin.innerHTML = '<div class="flight-itin-title">Itinerary</div><div class="flight-leg"><div class="flight-leg-icon">✈️</div><div class="flight-leg-text"><div class="t1">Pick two teammates</div><div class="t2">Search above to choose a departure and destination.</div></div><div class="flight-leg-dur"></div></div>';
+    _flightDrawLine(null);
+    return;
+  }
+  const a = members[flightFromIdx];
+  const b = members[flightToIdx];
+  if (!a || !b) return;
+
+  if (a === b) {
+    distEl.textContent = '0';
+    timeEl.textContent = '—';
+    tzEl.textContent = '—';
+    itin.innerHTML = '<div class="flight-itin-title">Itinerary</div><div class="flight-leg"><div class="flight-leg-icon">🏠</div><div class="flight-leg-text"><div class="t1">Same teammate selected</div><div class="t2">Pick two different people to plan a route.</div></div><div class="flight-leg-dur"></div></div>';
+    _flightDrawLine(null);
+    return;
+  }
+
+  const miles = _haversineMiles(a.lat, a.lng, b.lat, b.lng);
+  // Rough: cruise ~500 mph + 45 min for taxi/approach
+  const hours = miles / 500 + 0.75;
+  const h = Math.floor(hours);
+  const mins = Math.round((hours - h) * 60);
+  const offA = memberUtcOffset(a);
+  const offB = memberUtcOffset(b);
+  const diff = offB - offA;
+
+  distEl.textContent = Math.round(miles).toLocaleString();
+  timeEl.textContent = `${h}h ${String(mins).padStart(2, '0')}m`;
+  const sign = diff === 0 ? '±' : (diff > 0 ? '+' : '−');
+  tzEl.textContent = `${sign}${Math.abs(diff)}h`;
+
+  const cityA = (a.city || '').split(',')[0].trim();
+  const cityB = (b.city || '').split(',')[0].trim();
+  itin.innerHTML = `
+    <div class="flight-itin-title">Itinerary</div>
+    <div class="flight-leg">
+      <div class="flight-leg-icon">🛫</div>
+      <div class="flight-leg-text">
+        <div class="t1">Depart — ${escapeHtml(cityA || a.name)}</div>
+        <div class="t2">${escapeHtml(a.name)} · ${escapeHtml(a.role || '')}</div>
+      </div>
+      <div class="flight-leg-dur">0h 00m</div>
+    </div>
+    <div class="flight-thread"></div>
+    <div class="flight-leg">
+      <div class="flight-leg-icon">✈️</div>
+      <div class="flight-leg-text">
+        <div class="t1">In flight · ${Math.round(miles).toLocaleString()} mi</div>
+        <div class="t2">Cruise ~500 mph, great-circle distance</div>
+      </div>
+      <div class="flight-leg-dur">${h}h ${String(mins).padStart(2, '0')}m</div>
+    </div>
+    <div class="flight-thread"></div>
+    <div class="flight-leg">
+      <div class="flight-leg-icon">🛬</div>
+      <div class="flight-leg-text">
+        <div class="t1">Arrive — ${escapeHtml(cityB || b.name)}</div>
+        <div class="t2">${escapeHtml(b.name)} · ${escapeHtml(b.role || '')}</div>
+      </div>
+      <div class="flight-leg-dur"></div>
+    </div>
+  `;
+
+  _flightDrawLine([a, b]);
+}
+
+function _flightDrawLine(pair) {
+  if (flightLine) { try { map.removeLayer(flightLine); } catch (_) {} flightLine = null; }
+  if (!pair) return;
+  const [a, b] = pair;
+  // Use a curved great-circle-ish path with Leaflet's antPath alternative: plain polyline with slight arc via bezier midpoint.
+  const latlngs = [];
+  const steps = 64;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    // simple arc: lift the midpoint by ~10% of distance in lat
+    const lat = a.lat + (b.lat - a.lat) * t;
+    const lng = a.lng + (b.lng - a.lng) * t;
+    const lift = Math.sin(t * Math.PI) * Math.min(8, Math.abs(b.lng - a.lng) * 0.18 + Math.abs(b.lat - a.lat) * 0.18);
+    latlngs.push([lat + lift, lng]);
+  }
+  flightLine = L.polyline(latlngs, {
+    color: '#7C50C8',
+    weight: 3,
+    opacity: 0.85,
+    dashArray: '6 6',
+    className: 'flight-path'
+  }).addTo(map);
+  try {
+    map.fitBounds(flightLine.getBounds(), { padding: [80, 80], maxZoom: 5 });
+  } catch (_) {}
+}
+
+function openFlightItinerary() {
+  _flightPopulateSelects();
+  const o = document.getElementById('flight-overlay');
+  if (o) o.classList.add('open');
+  updateFlight();
+}
+function closeFlightItinerary() {
+  const o = document.getElementById('flight-overlay');
+  if (o) o.classList.remove('open');
+  _flightDrawLine(null);
+}
+function openFlight() { openFlightItinerary(); }
+function closeFlight() { closeFlightItinerary(); }
+function swapFlight() {
+  const tmp = flightFromIdx;
+  flightFromIdx = flightToIdx;
+  flightToIdx = tmp;
+  // Refresh both inputs to reflect new selections
+  for (const role of ['from', 'to']) {
+    const { combo, input } = _flightComboEls(role);
+    if (!combo) continue;
+    const idx = _flightCurrentIdx(role);
+    input.value = idx != null ? _flightComboLabel(idx) : '';
+    combo.classList.toggle('has-value', idx != null);
+    combo.classList.remove('open');
+  }
+  updateFlight();
+}
+function randomFlight() {
+  const list = _flightPinned();
+  if (list.length < 2) return;
+  const fromPick = list[Math.floor(Math.random() * list.length)].i;
+  let toPick = list[Math.floor(Math.random() * list.length)].i;
+  let guard = 0;
+  while (toPick === fromPick && guard++ < 20) toPick = list[Math.floor(Math.random() * list.length)].i;
+  _flightPopulateSelects({ from: fromPick, to: toPick });
+  updateFlight();
+}
 
 function initTour() {
   if (localStorage.getItem('clutch_tour_done')) return;
@@ -2700,9 +6034,71 @@ function skipTour() {
   // Cap year input to current year
   document.getElementById('f-year').max = new Date().getFullYear();
   await loadFromSheets();
+  applyUrlState();
   renderAll();
   initTour();
 })();
 </script>
+
+<!-- Keyboard shortcuts overlay -->
+<div id="shortcuts-overlay" onclick="if(event.target===this)closeShortcuts()">
+  <div class="shortcuts-card" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="shortcuts-head">
+      <div class="shortcuts-title">Keyboard shortcuts</div>
+      <button class="shortcuts-close" onclick="closeShortcuts()" aria-label="Close">&times;</button>
+    </div>
+    <div class="sc-grid">
+      <div class="sc-row"><span class="sc-label">Focus search</span><span class="sc-keys"><span class="sc-key">/</span></span></div>
+      <div class="sc-row"><span class="sc-label">Navigate list</span><span class="sc-keys"><span class="sc-key">↑</span><span class="sc-key">↓</span></span></div>
+      <div class="sc-row"><span class="sc-label">Open selected teammate</span><span class="sc-keys"><span class="sc-key">Enter</span></span></div>
+      <div class="sc-row"><span class="sc-label">Clear filters / close</span><span class="sc-keys"><span class="sc-key">Esc</span></span></div>
+      <div class="sc-row"><span class="sc-label">Random teammate</span><span class="sc-keys"><span class="sc-key">R</span></span></div>
+      <div class="sc-row"><span class="sc-label">Toggle dark mode</span><span class="sc-keys"><span class="sc-key">D</span></span></div>
+      <div class="sc-row"><span class="sc-label">Plan a flight</span><span class="sc-keys"><span class="sc-key">F</span></span></div>
+      <div class="sc-row"><span class="sc-label">Show this panel</span><span class="sc-keys"><span class="sc-key">?</span></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Flight itinerary overlay -->
+<div id="flight-overlay" onclick="if(event.target===this)closeFlight()">
+  <div class="flight-card" role="dialog" aria-label="Plan a flight">
+    <div class="flight-head">
+      <div class="flight-title">✈️ Plan a Clutch meetup</div>
+      <button class="shortcuts-close" onclick="closeFlight()" aria-label="Close">&times;</button>
+    </div>
+    <div class="flight-sub">Pick two teammates to see the route between them.</div>
+    <div class="flight-pickers">
+      <div>
+        <label class="flight-picker-label" for="flight-from-input">From</label>
+        <div class="flight-combo" id="flight-from-combo" data-role="from">
+          <input type="text" class="flight-combo-input" id="flight-from-input" placeholder="Search teammate…" autocomplete="off" />
+          <button type="button" class="flight-combo-clear" aria-label="Clear" tabindex="-1">✕</button>
+          <div class="flight-combo-list" role="listbox"></div>
+        </div>
+      </div>
+      <button class="flight-swap" onclick="swapFlight()" title="Swap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/></svg></button>
+      <div>
+        <label class="flight-picker-label" for="flight-to-input">To</label>
+        <div class="flight-combo" id="flight-to-combo" data-role="to">
+          <input type="text" class="flight-combo-input" id="flight-to-input" placeholder="Search teammate…" autocomplete="off" />
+          <button type="button" class="flight-combo-clear" aria-label="Clear" tabindex="-1">✕</button>
+          <div class="flight-combo-list" role="listbox"></div>
+        </div>
+      </div>
+    </div>
+    <div class="flight-summary">
+      <div><div class="flight-stat-val" id="flight-dist">—</div><div class="flight-stat-lab">Miles</div></div>
+      <div><div class="flight-stat-val" id="flight-time">—</div><div class="flight-stat-lab">Flight time</div></div>
+      <div><div class="flight-stat-val" id="flight-tz">—</div><div class="flight-stat-lab">Time diff</div></div>
+    </div>
+    <div class="flight-itinerary" id="flight-itin"></div>
+    <div class="flight-actions">
+      <button class="flight-btn" onclick="randomFlight()">🎲 Surprise pair</button>
+      <button class="flight-btn primary" onclick="closeFlight()">Done</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
